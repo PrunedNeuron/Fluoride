@@ -1,4 +1,4 @@
-package controller
+package server
 
 import (
 	"icon-requests/api"
@@ -17,8 +17,8 @@ type IconServer struct {
 	iconStore api.IconStore
 }
 
-// Setup will set up the API listener
-func Setup(router chi.Router, iconStore api.IconStore) error {
+// SetupIconServer will set up the API listener and attach routes
+func SetupIconServer(router chi.Router, iconStore api.IconStore) error {
 	server := &IconServer{
 		logger:    zap.S().With("package", "server"),
 		router:    router,
