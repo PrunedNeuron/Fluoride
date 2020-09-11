@@ -27,9 +27,37 @@ var (
 	iconService = service.NewIconService(iconStore)
 )
 
-// GetIcons responds with a list of all the icons
-func GetIcons(w http.ResponseWriter, r *http.Request) {
+// GetAllIcons responds with a list of all the icons
+func GetAllIcons(w http.ResponseWriter, r *http.Request) {
 	list, err := iconService.GetAllIcons()
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status:  "success",
+		Message: "retrieved " + strconv.Itoa(len(list)) + " icons",
+		Icons:   list,
+	})
+}
+
+// GetPendingIcons responds with a list of all the icons
+func GetPendingIcons(w http.ResponseWriter, r *http.Request) {
+	list, err := iconService.GetPendingIcons()
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status:  "success",
+		Message: "retrieved " + strconv.Itoa(len(list)) + " icons",
+		Icons:   list,
+	})
+}
+
+// GetDoneIcons responds with a list of all the icons
+func GetDoneIcons(w http.ResponseWriter, r *http.Request) {
+	list, err := iconService.GetDoneIcons()
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -109,6 +137,32 @@ func SaveIcons(w http.ResponseWriter, r *http.Request) {
 // GetIconCount responds with the number of icon requests
 func GetIconCount(w http.ResponseWriter, r *http.Request) {
 	count, err := iconService.GetIconCount()
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Count:  count,
+	})
+}
+
+// GetPendingIconCount responds with the number of icon requests
+func GetPendingIconCount(w http.ResponseWriter, r *http.Request) {
+	count, err := iconService.GetPendingIconCount()
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Count:  count,
+	})
+}
+
+// GetDoneIconCount responds with the number of icon requests
+func GetDoneIconCount(w http.ResponseWriter, r *http.Request) {
+	count, err := iconService.GetDoneIconCount()
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
