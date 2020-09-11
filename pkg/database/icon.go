@@ -115,3 +115,23 @@ func (dbc *DBClient) GetCount() (int, error) {
 
 	return count, nil
 }
+
+// UpdateStatus updates the status of the icon request (pending | complete)
+func (dbc *DBClient) UpdateStatus(component, status string) (string, error) {
+	row := dbc.db.QueryRowx(`
+		UPDATE icon_requests
+		SET status = $1
+		WHERE component = $2
+		RETURNING status	
+	`, status, component)
+
+	var newStatus string
+	err := row.Scan(&newStatus)
+
+	if err != nil {
+		zap.S().Debugw("Failed to scan status...")
+		return "", err
+	}
+
+	return newStatus, nil
+}
