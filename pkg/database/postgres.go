@@ -1,18 +1,17 @@
-package postgres
+package database
 
 import (
+	"fluoride/config"
 	"fmt"
-	"icon-requests/config"
-	"os"
 
-	_ "github.com/jackc/pgx/stdlib" // For pg driver
+	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/xid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
-// DBClient is the database client
+// DBClient is the database client type
 type DBClient struct {
 	logger *zap.SugaredLogger
 	dbName string
@@ -27,7 +26,7 @@ func New() (*DBClient, error) {
 	var (
 		err           error
 		dbCredentials string
-		dbURL         string
+		dbAddress     string
 		dbURLOptions  string
 	)
 
@@ -40,13 +39,13 @@ func New() (*DBClient, error) {
 
 	// Hostname + Port
 	if hostname := viper.GetString("storage.host"); hostname != "" {
-		dbURL += "@" + hostname
+		dbAddress += "@" + hostname
 	} else {
 		return nil, fmt.Errorf("No hostname specified")
 	}
 
 	if port := viper.GetString("storage.port"); port != "" {
-		dbURL += ":" + port
+		dbAddress += ":" + port
 	}
 
 	// Database name
@@ -60,34 +59,23 @@ func New() (*DBClient, error) {
 		dbURLOptions += fmt.Sprintf("?sslmode=%s", sslMode)
 	}
 
-	var fullDbURL string
-
-	// Build full DB URL
-	if os.Getenv("DB_URL") != "" {
-		fullDbURL = os.Getenv("DB_URL")
-	} else {
-		fullDbURL = "postgres://" + dbCredentials + dbURL + "/" + dbName + dbURLOptions
-	}
+	// Concatenate and form the full database url
+	dbURL := "postgres://" + dbCredentials + dbAddress + "/" + dbName + dbURLOptions
 
 	// If the stop flag is caught while sleeping
 	if config.Stop.Bool() {
 		return nil, fmt.Errorf("Database connection aborted")
 	}
 
-	// Scream if still disconnected
-	if err != nil {
-		return nil, fmt.Errorf("Could not connect to database: %s", err)
-	}
-
-	// Connect to the database
-	db, err := sqlx.Connect("pgx", fullDbURL)
+	// Connect to the database and verify with a ping
+	db, err := sqlx.Open("pgx", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("Could not connect to database: %s", err)
 	}
 
 	// Ping database
 	if err = db.Ping(); err != nil {
-		return nil, fmt.Errorf("Could not ping database %s", err)
+		return nil, fmt.Errorf("Could not ping the database %s", err)
 	}
 
 	db.SetMaxOpenConns(viper.GetInt("storage.max_connections"))
@@ -99,34 +87,13 @@ func New() (*DBClient, error) {
 		"storage.database", viper.GetString("storage.database"),
 	)
 
-	c := &DBClient{
+	return &DBClient{
 		logger: logger,
 		dbName: dbName,
 		db:     db,
 		newID: func() string {
 			return xid.New().String()
 		},
-	}
+	}, nil
 
-	return c, nil
-
-	/* logger.Debug("Trying to connect...")
-	db, err := sqlx.Connect("pgx", os.Getenv("DB_URL"))
-	if err != nil {
-		logger.Error("Could not connect to database: %s", err)
-		return nil
-	}
-
-	return &DBClient{
-		logger: logger,
-		db:     db,
-		newID: func() string {
-			return xid.New().String()
-		},
-	} */
 }
-
-/* func (dbc *DBClient) GetDB() *sqlx.DB {
-	return dbc.db
-}
-*/

@@ -9,14 +9,14 @@ import (
 )
 
 type stop struct {
-	c chan struct{}
+	channel chan struct{}
 	sync.WaitGroup
 }
 
 var (
 	// Stop is the global stop instance
 	Stop = &stop{
-		c: make(chan struct{}),
+		channel: make(chan struct{}),
 	}
 
 	// Handle signals
@@ -35,7 +35,7 @@ func init() {
 				switch sig {
 				case os.Interrupt:
 					zap.S().Info("Received interrupt...")
-					close(Stop.c)
+					close(Stop.channel)
 					return
 				}
 			}
@@ -45,15 +45,16 @@ func init() {
 
 // Chan returns a read only channel that is closed when the program exits
 func (s *stop) Chan() <-chan struct{} {
-	return s.c
+	return s.channel
 }
 
 // Bool returns t/f if we should stop
 func (s *stop) Bool() bool {
 	select {
-	case <-s.c:
+	case <-s.channel:
 		return true
 	default:
 		return false
 	}
+
 }

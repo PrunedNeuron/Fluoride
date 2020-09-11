@@ -1,8 +1,16 @@
 package config
 
-var (
-	// Executable is overridden by Makefile with executable name
-	Executable = "NoExecutable"
-	// GitVersion is overridden by Makefile with git information
-	GitVersion = "NoGitVersion"
+import (
+	"github.com/spf13/viper"
 )
+
+var (
+	// Executable is the name of the exec
+	Executable = "fluoride"
+	// Version is the current version
+	Version = "1.0.0"
+)
+
+func init() {
+	Version = viper.GetString("application.version")
+}

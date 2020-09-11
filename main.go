@@ -1,8 +1,6 @@
 package main
 
-import (
-	"icon-requests/cmd"
-)
+import "fluoride/cmd"
 
 func main() {
 	cmd.Execute()

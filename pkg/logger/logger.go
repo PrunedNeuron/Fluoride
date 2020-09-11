@@ -1,4 +1,4 @@
-package server
+package logger
 
 import (
 	"bytes"
@@ -71,7 +71,7 @@ func DefaultHTTPLogger(logRequestBody bool, disabledEndpoints []string) func(htt
 	}
 }
 
-// StackDriverHTTPLogger is a structured logger
+// StackDriverHTTPLogger is a much more verbose logger. CURRENTLY UNUSED
 func StackDriverHTTPLogger(logRequestBody bool, disabledEndpoints []string) func(http.Handler) http.Handler {
 	// Make a map lookup for disabled endpoints
 	disabled := make(map[string]struct{})

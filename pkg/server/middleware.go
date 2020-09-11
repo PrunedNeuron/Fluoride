@@ -10,7 +10,7 @@ import (
 
 // Helmet provides essential security extensions
 func Helmet() func(http.Handler) http.Handler {
-	helmet := secure.New(secure.Options{
+	return secure.New(secure.Options{
 		// AllowedHosts:          []string{"example\\.com", ".*\\.example\\.com"},
 		// AllowedHostsAreRegex:  true,
 		HostsProxyHeaders: []string{"X-Forwarded-Host"},
@@ -25,16 +25,10 @@ func Helmet() func(http.Handler) http.Handler {
 		BrowserXssFilter:      true,
 		ReferrerPolicy:        "same-origin",
 		ContentSecurityPolicy: "script-src $NONCE",
-	})
-
-	return helmet.Handler
+	}).Handler
 }
 
 // Compression provides gzip compression
 func Compression() func(http.Handler) http.Handler {
-
-	compressor := middleware.NewCompressor(flate.DefaultCompression)
-
-	return compressor.Handler
-
+	return middleware.NewCompressor(flate.DefaultCompression).Handler
 }
