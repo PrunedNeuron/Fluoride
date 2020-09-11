@@ -10,7 +10,7 @@ import (
 func init() {
 
 	// Application info
-	viper.SetDefault("application.version", "1.0.1")
+	viper.SetDefault("application.version", "1.0.0")
 
 	// Logger Defaults
 	viper.SetDefault("logger.level", "debug")
