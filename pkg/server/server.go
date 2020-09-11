@@ -55,7 +55,7 @@ func New() (*Server, error) {
 					zap.String("remote", r.RemoteAddr),
 					zap.String("request", r.RequestURI),
 					zap.String("method", r.Method),
-					zap.String("package", "server.request"),
+					zap.String("package", "server"),
 				}
 
 				zap.L().Info("API Request", fields...)
@@ -69,15 +69,15 @@ func New() (*Server, error) {
 	}
 
 	// Routes
-	routes.Route(&server.router)
+	routes.Route(server.router) // Don't need to pass address since chi.Router is already a pointer, since it is of type *chi.Mux
 
 	return server, nil
 }
 
-// Serve will start the server and listen for requests
+// Serve will start the server and make it listen for requests
 func (server *Server) Serve() error {
 
-	// Create the http server and assign host and port
+	// Create the http server and assign host, port from config
 	server.httpServer = &http.Server{
 		Addr:    net.JoinHostPort(viper.GetString("server.host"), viper.GetString("server.port")),
 		Handler: server.router,
@@ -104,9 +104,4 @@ func (server *Server) Serve() error {
 	}
 
 	return nil
-}
-
-// GetRouter returns the server's associated chi router
-func (server *Server) GetRouter() chi.Router {
-	return server.router
 }
