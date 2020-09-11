@@ -12,16 +12,16 @@ import (
 type IconStore interface {
 
 	// Gets all the icons in the DB
-	GetAllIcons() ([]model.Icon, error)
+	GetAllIcons(string) ([]model.Icon, error)
 
 	// Gets icons with status = pending
-	GetPendingIcons() ([]model.Icon, error)
+	GetPendingIcons(string) ([]model.Icon, error)
 
 	// Gets icons with status = done
-	GetDoneIcons() ([]model.Icon, error)
+	GetDoneIcons(string) ([]model.Icon, error)
 
 	// Gets icons with component = given string
-	GetIconByComponent(string) (*model.Icon, error)
+	GetIconByComponent(string, string) (*model.Icon, error)
 
 	// Saves a single icon
 	SaveIcon(*model.Icon) (int, error)
@@ -30,16 +30,16 @@ type IconStore interface {
 	SaveIcons([]*model.Icon) (int, error)
 
 	// Gets the number of icons
-	GetIconCount() (int, error)
+	GetIconCount(string) (int, error)
 
 	// Gets the number of pending icons
-	GetPendingIconCount() (int, error)
+	GetPendingIconCount(string) (int, error)
 
 	// Gets the number of done icons
-	GetDoneIconCount() (int, error)
+	GetDoneIconCount(string) (int, error)
 
 	// Updates the status of the icon with the given component with the given status
-	UpdateStatus(string, string) (string, error)
+	UpdateStatus(string, string, string) (string, error)
 }
 
 // NewIconStore creates and returns a new icon store instance

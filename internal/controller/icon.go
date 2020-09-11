@@ -29,7 +29,14 @@ var (
 
 // GetAllIcons responds with a list of all the icons
 func GetAllIcons(w http.ResponseWriter, r *http.Request) {
-	list, err := iconService.GetAllIcons()
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+	list, err := iconService.GetAllIcons(pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -43,7 +50,14 @@ func GetAllIcons(w http.ResponseWriter, r *http.Request) {
 
 // GetPendingIcons responds with a list of all the icons
 func GetPendingIcons(w http.ResponseWriter, r *http.Request) {
-	list, err := iconService.GetPendingIcons()
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+	list, err := iconService.GetPendingIcons(pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -57,7 +71,14 @@ func GetPendingIcons(w http.ResponseWriter, r *http.Request) {
 
 // GetDoneIcons responds with a list of all the icons
 func GetDoneIcons(w http.ResponseWriter, r *http.Request) {
-	list, err := iconService.GetDoneIcons()
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+	list, err := iconService.GetDoneIcons(pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -71,15 +92,21 @@ func GetDoneIcons(w http.ResponseWriter, r *http.Request) {
 
 // GetIconByComponent responds with the matching icon
 func GetIconByComponent(w http.ResponseWriter, r *http.Request) {
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
 	// Get component
 	component := chi.URLParam(r, "component")
 
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
 	if component == "" {
 		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid component")))
 		return
 	}
 
-	icon, err := iconService.GetIconByComponent(component)
+	icon, err := iconService.GetIconByComponent(pack, component)
 
 	if err == errors.ErrDatabaseNotFound {
 		render.Render(w, r, errors.ErrNotFound)
@@ -93,10 +120,23 @@ func GetIconByComponent(w http.ResponseWriter, r *http.Request) {
 
 // SaveIcon saves the icon to the database
 func SaveIcon(w http.ResponseWriter, r *http.Request) {
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
 
 	var icon = new(model.Icon)
+
 	if err := render.DecodeJSON(r.Body, &icon); err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+
+	if icon.Pack != pack {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("icon pack mismatch")))
 		return
 	}
 
@@ -112,6 +152,13 @@ func SaveIcon(w http.ResponseWriter, r *http.Request) {
 
 // SaveIcons saves the list of icons to the database
 func SaveIcons(w http.ResponseWriter, r *http.Request) {
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
 
 	var icons []*model.Icon
 
@@ -119,6 +166,13 @@ func SaveIcons(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		logger.Errorw("Error: ", errors.ErrInvalidRequest(err))
 		return
+	}
+
+	for _, icon := range icons {
+		if icon.Pack != pack {
+			render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("icon pack mismatch")))
+			return
+		}
 	}
 
 	count, err := iconService.SaveIcons(icons)
@@ -136,7 +190,15 @@ func SaveIcons(w http.ResponseWriter, r *http.Request) {
 
 // GetIconCount responds with the number of icon requests
 func GetIconCount(w http.ResponseWriter, r *http.Request) {
-	count, err := iconService.GetIconCount()
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+
+	count, err := iconService.GetIconCount(pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -149,7 +211,15 @@ func GetIconCount(w http.ResponseWriter, r *http.Request) {
 
 // GetPendingIconCount responds with the number of icon requests
 func GetPendingIconCount(w http.ResponseWriter, r *http.Request) {
-	count, err := iconService.GetPendingIconCount()
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+
+	count, err := iconService.GetPendingIconCount(pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -162,7 +232,15 @@ func GetPendingIconCount(w http.ResponseWriter, r *http.Request) {
 
 // GetDoneIconCount responds with the number of icon requests
 func GetDoneIconCount(w http.ResponseWriter, r *http.Request) {
-	count, err := iconService.GetDoneIconCount()
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+
+	count, err := iconService.GetDoneIconCount(pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -209,7 +287,15 @@ func UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status, err := iconService.UpdateStatus(req.Component, req.Status)
+	// Get pack from url
+	pack := chi.URLParam(r, "pack")
+
+	if pack == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid pack")))
+		return
+	}
+
+	status, err := iconService.UpdateStatus(pack, req.Component, req.Status)
 
 	render.JSON(w, r, &response{
 		Status:  "success",

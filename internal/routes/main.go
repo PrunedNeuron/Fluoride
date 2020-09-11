@@ -12,13 +12,13 @@ func Route(router *chi.Router) {
 	(*router).Get("/version", controller.GetVersion())
 
 	// Icons
-	(*router).Get("/icons", controller.GetAllIcons)
-	(*router).Get("/icons/pending", controller.GetPendingIcons)
-	(*router).Get("/icons/done", controller.GetDoneIcons)
-	(*router).Get("/icons/{component}", controller.GetIconByComponent)
-	(*router).Post("/icons", controller.SaveIcons)
-	(*router).Get("/icons/count", controller.GetIconCount)
-	(*router).Get("/icons/pending/count", controller.GetPendingIconCount)
-	(*router).Get("/icons/done/count", controller.GetDoneIconCount)
-	(*router).Put("/icons/status", controller.UpdateStatus)
+	(*router).Get("/{pack}/icons", controller.GetAllIcons)
+	(*router).Get("/{pack}/icons/pending", controller.GetPendingIcons)
+	(*router).Get("/{pack}/icons/done", controller.GetDoneIcons)
+	(*router).Get("/{pack}/icons/{component}", controller.GetIconByComponent)
+	(*router).Post("/{pack}/icons", controller.SaveIcons)
+	(*router).Get("/{pack}/icons/count", controller.GetIconCount)
+	(*router).Get("/{pack}/icons/pending/count", controller.GetPendingIconCount)
+	(*router).Get("/{pack}/icons/done/count", controller.GetDoneIconCount)
+	(*router).Put("/{pack}/icons/status", controller.UpdateStatus)
 }

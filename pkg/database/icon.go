@@ -11,10 +11,14 @@ import (
 )
 
 // GetAllIcons gets all the icons
-func (dbc *DBClient) GetAllIcons() ([]model.Icon, error) {
+func (dbc *DBClient) GetAllIcons(pack string) ([]model.Icon, error) {
 	icons := []model.Icon{}
 	zap.S().Debugw("Querying the database for all icon requests")
-	rows, err := dbc.db.Queryx("SELECT * FROM icon_requests ORDER BY id DESC")
+	rows, err := dbc.db.Queryx(`
+		SELECT * FROM icon_requests
+		WHERE pack = $1
+		ORDER BY id DESC
+	`, pack)
 	zap.S().Debugw("Scanning the result")
 	for rows.Next() {
 		var icon model.Icon
@@ -32,13 +36,14 @@ func (dbc *DBClient) GetAllIcons() ([]model.Icon, error) {
 }
 
 // GetPendingIcons retrieves the list of icons which are still pending
-func (dbc *DBClient) GetPendingIcons() ([]model.Icon, error) {
+func (dbc *DBClient) GetPendingIcons(pack string) ([]model.Icon, error) {
 	icons := []model.Icon{}
 	zap.S().Debugw("Querying the database for icons with status pending")
 	rows, err := dbc.db.Queryx(`
 		SELECT * FROM icon_requests
-		WHERE status = 'pending'
-	`)
+		WHERE pack = $1 AND status = 'pending'
+		ORDER BY id DESC
+	`, pack)
 	zap.S().Debugw("Scanning the result")
 
 	for rows.Next() {
@@ -57,13 +62,14 @@ func (dbc *DBClient) GetPendingIcons() ([]model.Icon, error) {
 }
 
 // GetDoneIcons retrieves the list of icons which are still pending
-func (dbc *DBClient) GetDoneIcons() ([]model.Icon, error) {
+func (dbc *DBClient) GetDoneIcons(pack string) ([]model.Icon, error) {
 	icons := []model.Icon{}
 	zap.S().Debugw("Querying the database for icons with status pending")
 	rows, err := dbc.db.Queryx(`
 		SELECT * FROM icon_requests
-		WHERE status = 'done'
-	`)
+		WHERE pack = $1 AND status = 'done'
+		ORDER BY id DESC
+	`, pack)
 	zap.S().Debugw("Scanning the result")
 
 	for rows.Next() {
@@ -82,9 +88,12 @@ func (dbc *DBClient) GetDoneIcons() ([]model.Icon, error) {
 }
 
 // GetIconByComponent returns the matching icon
-func (dbc *DBClient) GetIconByComponent(component string) (*model.Icon, error) {
+func (dbc *DBClient) GetIconByComponent(pack, component string) (*model.Icon, error) {
 	zap.S().Debugw("Querying the database with the given component")
-	row := dbc.db.QueryRowx("SELECT * FROM icon_requests WHERE component = $1", component)
+	row := dbc.db.QueryRowx(`
+		SELECT * FROM icon_requests
+		WHERE pack = $1 AND component = $2
+	`, pack, component)
 
 	zap.S().Debugw("Scanning the selected icon request")
 	var icon model.Icon
@@ -107,7 +116,7 @@ func (dbc *DBClient) SaveIcon(icon *model.Icon) (int, error) {
 	row := dbc.db.QueryRowx(`
 		INSERT INTO icon_requests (name, component, url)
 		VALUES ($1, $2, $3)
-		ON CONFLICT (component) DO UPDATE
+		ON CONFLICT (pack, component) DO UPDATE
 		SET requesters = icon_requests.requesters + 1
 		RETURNING *
 	`, icon.Name, icon.Component, icon.URL)
@@ -134,7 +143,7 @@ func (dbc *DBClient) SaveIcons(icons []*model.Icon) (int, error) {
 		_, err := dbc.db.Exec(`
 		INSERT INTO icon_requests (name, component, url, pack, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (component) DO UPDATE
+		ON CONFLICT (pack, component) DO UPDATE
 		SET (requesters, updated_at) = (icon_requests.requesters + 1, CURRENT_TIMESTAMP)
 	`, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
 
@@ -152,8 +161,11 @@ func (dbc *DBClient) SaveIcons(icons []*model.Icon) (int, error) {
 }
 
 // GetIconCount returns the number of icon request in the database
-func (dbc *DBClient) GetIconCount() (int, error) {
-	row := dbc.db.QueryRowx("SELECT COUNT(*) AS COUNT FROM icon_requests")
+func (dbc *DBClient) GetIconCount(pack string) (int, error) {
+	row := dbc.db.QueryRowx(`
+		SELECT COUNT(*) AS COUNT FROM icon_requests
+		WHERE pack = $1
+	`, pack)
 
 	var count int
 	err := row.Scan(&count)
@@ -167,11 +179,11 @@ func (dbc *DBClient) GetIconCount() (int, error) {
 }
 
 // GetPendingIconCount returns the number of icon request in the database
-func (dbc *DBClient) GetPendingIconCount() (int, error) {
+func (dbc *DBClient) GetPendingIconCount(pack string) (int, error) {
 	row := dbc.db.QueryRowx(`
 		SELECT COUNT(*) AS COUNT FROM icon_requests
-		WHERE status = 'pending'
-	`)
+		WHERE pack = $1 AND status = 'pending'
+	`, pack)
 
 	var count int
 	err := row.Scan(&count)
@@ -185,11 +197,11 @@ func (dbc *DBClient) GetPendingIconCount() (int, error) {
 }
 
 // GetDoneIconCount returns the number of icon request in the database
-func (dbc *DBClient) GetDoneIconCount() (int, error) {
+func (dbc *DBClient) GetDoneIconCount(pack string) (int, error) {
 	row := dbc.db.QueryRowx(`
 		SELECT COUNT(*) AS COUNT FROM icon_requests
-		WHERE status = 'done'
-	`)
+		WHERE pack = $1 AND status = 'done'
+	`, pack)
 
 	var count int
 	err := row.Scan(&count)
@@ -203,13 +215,13 @@ func (dbc *DBClient) GetDoneIconCount() (int, error) {
 }
 
 // UpdateStatus updates the status of the icon request (pending | complete)
-func (dbc *DBClient) UpdateStatus(component, status string) (string, error) {
+func (dbc *DBClient) UpdateStatus(pack, component, status string) (string, error) {
 	row := dbc.db.QueryRowx(`
 		UPDATE icon_requests
 		SET status = $1
-		WHERE component = $2
+		WHERE pack = $2 AND component = $3
 		RETURNING status	
-	`, status, component)
+	`, status, pack, component)
 
 	var newStatus string
 	err := row.Scan(&newStatus)

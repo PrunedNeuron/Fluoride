@@ -25,8 +25,8 @@ var serverCmd = &cobra.Command{
 			logger.Fatalw("Could not start the server", "error", err)
 		}
 
-		<-config.Stop.Chan() // wait until StopChan
-		config.Stop.Wait()   // wait until everyone cleans up
+		<-config.Stop.Chan() // wait until stop channel
+		config.Stop.Wait()   // wait until everything else has gracefully exited
 		zap.L().Sync()       // Flush the logger
 	},
 }
