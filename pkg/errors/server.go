@@ -18,7 +18,7 @@ type ErrorResponse struct {
 // ErrNotFound is a predefined 404 error
 var ErrNotFound = &ErrorResponse{
 	HTTPStatusCode: 404,
-	Message:        "Resource not found",
+	Message:        "resource not found",
 }
 
 // Render is the error response renderer
@@ -37,17 +37,23 @@ func ErrInvalidRequest(err error) render.Renderer {
 	return &ErrorResponse{
 		Error:          err,
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        "Invalid request.",
+		Message:        "invalid request",
 		ErrorText:      errorText,
 	}
 }
 
 // ErrInternalServer returns a generic server error
 func ErrInternalServer(err error) render.Renderer {
+
+	var errorText string
+
+	if err != nil {
+		errorText = err.Error()
+	}
 	return &ErrorResponse{
 		Error:          err,
 		HTTPStatusCode: http.StatusInternalServerError,
-		Message:        "Server error.",
-		ErrorText:      "Server error.",
+		Message:        "server error",
+		ErrorText:      errorText,
 	}
 }
