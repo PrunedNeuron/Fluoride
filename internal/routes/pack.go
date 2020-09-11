@@ -1,12 +1,10 @@
 package routes
 
 import (
-	"net/http"
-
 	"github.com/go-chi/chi"
 )
 
-func packRouter() http.Handler {
+func packRouter() chi.Router {
 	router := chi.NewRouter()
 
 	// Icons
