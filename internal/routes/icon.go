@@ -2,13 +2,12 @@ package routes
 
 import (
 	"fluoride/internal/controller"
-	"net/http"
 
 	"github.com/go-chi/chi"
 )
 
 // IconRouter routes the endpoints associated with icon requests
-func iconRouter() http.Handler {
+func iconRouter() chi.Router {
 	router := chi.NewRouter()
 
 	router.Get("/", controller.GetAllIcons)
