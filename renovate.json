@@ -1,0 +1,10 @@
+{
+	"extends": [
+		"config:base",
+		"group:all",
+		":disableRateLimiting",
+		":preserveSemverRanges",
+		":semanticCommits"
+	],
+	"baseBranches": ["development"]
+}
