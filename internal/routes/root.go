@@ -6,14 +6,13 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// Route attaches routes to the given router
-func Route(router *chi.Router) {
+// Route creates a new router, sets it up and returns it
+func Route(router chi.Router) {
 
 	// Universal routes
-	(*router).Get("/", controller.GetIndex())
-	(*router).Get("/version", controller.GetVersion())
+	router.Get("/", controller.GetIndex())
+	router.Get("/version", controller.GetVersion())
 
 	// Icon pack specific router
-	(*router).Mount("/{pack}", packRouter())
-
+	router.Mount("/{pack}", packRouter())
 }
