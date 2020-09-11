@@ -15,6 +15,7 @@ type IconStore interface {
 	SaveIcon(*model.Icon) (int, error)
 	SaveIcons([]*model.Icon) (int, error)
 	GetCount() (int, error)
+	UpdateStatus(string, string) (string, error)
 }
 
 // NewIconStore creates and returns a new icon store instance
