@@ -46,9 +46,9 @@ func (service *IconService) SaveIcons(icons []*model.Icon) (int, error) {
 	return service.iconStore.SaveIcons(icons)
 }
 
-// GetCount retrieves the number of icons in the database
-func (service *IconService) GetCount() (int, error) {
-	return service.iconStore.GetCount()
+// GetIconCount retrieves the number of icons in the database
+func (service *IconService) GetIconCount() (int, error) {
+	return service.iconStore.GetIconCount()
 }
 
 // UpdateStatus sets the new status of the icon request
