@@ -106,9 +106,9 @@ func SaveIcons(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetCount responds with the number of icon requests
-func GetCount(w http.ResponseWriter, r *http.Request) {
-	count, err := iconService.GetCount()
+// GetIconCount responds with the number of icon requests
+func GetIconCount(w http.ResponseWriter, r *http.Request) {
+	count, err := iconService.GetIconCount()
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -149,7 +149,7 @@ func UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Status != "pending" && req.Status != "complete" {
+	if req.Status != "pending" && req.Status != "done" {
 		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("Invalid status value")))
 		logger.Errorw("Error: ", errors.ErrInvalidRequest(fmt.Errorf("Invalid status value")))
 		return
