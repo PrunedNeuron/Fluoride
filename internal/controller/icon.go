@@ -118,3 +118,47 @@ func GetCount(w http.ResponseWriter, r *http.Request) {
 		Count:  count,
 	})
 }
+
+// UpdateStatus takes the new status and updates the database
+func UpdateStatus(w http.ResponseWriter, r *http.Request) {
+
+	type request struct {
+		Component string `json:"component"`
+		Status    string `json:"status"`
+	}
+
+	req := new(request)
+
+	err := render.DecodeJSON(r.Body, &req)
+
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		logger.Errorw("Error: ", errors.ErrInvalidRequest(err))
+		return
+	}
+
+	if req.Component == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("Missing component value")))
+		logger.Errorw("Error: ", errors.ErrInvalidRequest(fmt.Errorf("Missing component value")))
+		return
+	}
+
+	if req.Status == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("Missing status value")))
+		logger.Errorw("Error: ", errors.ErrInvalidRequest(fmt.Errorf("Missing status value")))
+		return
+	}
+
+	if req.Status != "pending" && req.Status != "complete" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("Invalid status value")))
+		logger.Errorw("Error: ", errors.ErrInvalidRequest(fmt.Errorf("Invalid status value")))
+		return
+	}
+
+	status, err := iconService.UpdateStatus(req.Component, req.Status)
+
+	render.JSON(w, r, &response{
+		Status:  "success",
+		Message: "Updated status to " + status + " for icon request with component " + req.Component,
+	})
+}
