@@ -12,14 +12,14 @@ import (
 
 // GetAllIcons gets all the icons
 func (dbc *DBClient) GetAllIcons() ([]model.Icon, error) {
-	temp := []model.Icon{}
+	icons := []model.Icon{}
 	zap.S().Debugw("Querying the database for all icon requests")
 	rows, err := dbc.db.Queryx("SELECT * FROM icon_requests ORDER BY id DESC")
 	zap.S().Debugw("Scanning the result")
 	for rows.Next() {
 		var icon model.Icon
 		err = rows.StructScan(&icon)
-		temp = append(temp, icon)
+		icons = append(icons, icon)
 	}
 	if err == sql.ErrNoRows {
 		zap.S().Info("No rows in the database!")
@@ -28,7 +28,57 @@ func (dbc *DBClient) GetAllIcons() ([]model.Icon, error) {
 	}
 
 	zap.S().Debugw("Returning with the list of all icon requests")
-	return temp, nil
+	return icons, nil
+}
+
+// GetPendingIcons retrieves the list of icons which are still pending
+func (dbc *DBClient) GetPendingIcons() ([]model.Icon, error) {
+	icons := []model.Icon{}
+	zap.S().Debugw("Querying the database for icons with status pending")
+	rows, err := dbc.db.Queryx(`
+		SELECT * FROM icon_requests
+		WHERE status = 'pending'
+	`)
+	zap.S().Debugw("Scanning the result")
+
+	for rows.Next() {
+		var icon model.Icon
+		err = rows.StructScan(&icon)
+		icons = append(icons, icon)
+	}
+	if err == sql.ErrNoRows {
+		zap.S().Info("No rows in the database!")
+	} else if err != nil {
+		return nil, err
+	}
+
+	zap.S().Debugw("Returning with the list of all icon requests")
+	return icons, nil
+}
+
+// GetDoneIcons retrieves the list of icons which are still pending
+func (dbc *DBClient) GetDoneIcons() ([]model.Icon, error) {
+	icons := []model.Icon{}
+	zap.S().Debugw("Querying the database for icons with status pending")
+	rows, err := dbc.db.Queryx(`
+		SELECT * FROM icon_requests
+		WHERE status = 'done'
+	`)
+	zap.S().Debugw("Scanning the result")
+
+	for rows.Next() {
+		var icon model.Icon
+		err = rows.StructScan(&icon)
+		icons = append(icons, icon)
+	}
+	if err == sql.ErrNoRows {
+		zap.S().Info("No rows in the database!")
+	} else if err != nil {
+		return nil, err
+	}
+
+	zap.S().Debugw("Returning with the list of all icon requests")
+	return icons, nil
 }
 
 // GetIconByComponent returns the matching icon
@@ -101,9 +151,45 @@ func (dbc *DBClient) SaveIcons(icons []*model.Icon) (int, error) {
 	return len(icons), nil
 }
 
-// GetCount returns the number of icon request in the database
-func (dbc *DBClient) GetCount() (int, error) {
+// GetIconCount returns the number of icon request in the database
+func (dbc *DBClient) GetIconCount() (int, error) {
 	row := dbc.db.QueryRowx("SELECT COUNT(*) AS COUNT FROM icon_requests")
+
+	var count int
+	err := row.Scan(&count)
+
+	if err != nil {
+		zap.S().Debugw("Failed to scan count")
+		return -1, err
+	}
+
+	return count, nil
+}
+
+// GetPendingIconCount returns the number of icon request in the database
+func (dbc *DBClient) GetPendingIconCount() (int, error) {
+	row := dbc.db.QueryRowx(`
+		SELECT COUNT(*) AS COUNT FROM icon_requests
+		WHERE status = 'pending'
+	`)
+
+	var count int
+	err := row.Scan(&count)
+
+	if err != nil {
+		zap.S().Debugw("Failed to scan count")
+		return -1, err
+	}
+
+	return count, nil
+}
+
+// GetDoneIconCount returns the number of icon request in the database
+func (dbc *DBClient) GetDoneIconCount() (int, error) {
+	row := dbc.db.QueryRowx(`
+		SELECT COUNT(*) AS COUNT FROM icon_requests
+		WHERE status = 'done'
+	`)
 
 	var count int
 	err := row.Scan(&count)
