@@ -15,6 +15,6 @@ func Route(router *chi.Router) {
 	(*router).Get("/icons", controller.GetIcons)
 	(*router).Get("/icons/{component}", controller.GetIconByComponent)
 	(*router).Post("/icons", controller.SaveIcons)
-	(*router).Get("/icons/count", controller.GetCount)
+	(*router).Get("/icons/count", controller.GetIconCount)
 	(*router).Put("/icons/status", controller.UpdateStatus)
 }
