@@ -51,6 +51,7 @@ func (dbc *DBClient) GetIconByComponent(component string) (*model.Icon, error) {
 }
 
 // SaveIcon upserts the icon to the database and updates requester count on conflict
+// !UNUSED
 func (dbc *DBClient) SaveIcon(icon *model.Icon) (int, error) {
 	zap.S().Debugw("Upserting the given icon request into the database...")
 	row := dbc.db.QueryRowx(`
@@ -88,6 +89,7 @@ func (dbc *DBClient) SaveIcons(icons []*model.Icon) (int, error) {
 	`, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
 
 		if err != nil {
+			zap.S().Debugw("Failed to insert icon")
 			return -1, err
 		}
 
