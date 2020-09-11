@@ -26,8 +26,10 @@ func (dbc *DBClient) GetAllIcons(pack string) ([]model.Icon, error) {
 		icons = append(icons, icon)
 	}
 	if err == sql.ErrNoRows {
-		zap.S().Info("No rows in the database!")
+		zap.S().Errorf("No rows in the database!")
+		return nil, err
 	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
 		return nil, err
 	}
 
