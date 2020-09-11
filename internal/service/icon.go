@@ -50,3 +50,8 @@ func (service *IconService) SaveIcons(icons []*model.Icon) (int, error) {
 func (service *IconService) GetCount() (int, error) {
 	return service.iconStore.GetCount()
 }
+
+// UpdateStatus sets the new status of the icon request
+func (service *IconService) UpdateStatus(component, status string) (string, error) {
+	return service.iconStore.UpdateStatus(component, status)
+}
