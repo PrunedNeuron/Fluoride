@@ -52,10 +52,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := userService.CreateUser(user)
+	username, role, err := userService.CreateUser(user)
 
 	render.JSON(w, r, &response{
 		Status:  "success",
-		Message: "Created user with username " + username,
+		Message: "Created " + role + " with username " + username,
 	})
 }
