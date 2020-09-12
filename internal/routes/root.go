@@ -30,8 +30,8 @@ func creatorRouter() chi.Router {
 	router := chi.NewRouter()
 
 	router.Post("/user", controller.CreateUser)
-	router.Post("/pack", controller.CreatePack)
-	router.Post("/plan", controller.CreatePlan)
+	// router.Post("/pack", controller.CreatePack)
+	// router.Post("/plan", controller.CreatePlan)
 
 	return router
 }
