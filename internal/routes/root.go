@@ -10,9 +10,15 @@ import (
 func Route(router chi.Router) {
 
 	// Universal routes
-	router.Get("/", controller.GetIndex())
-	router.Get("/version", controller.GetVersion())
+
+	// Get index page
+	router.Get("/", controller.GetIndex)
+	// Get current version
+	router.Get("/version", controller.GetVersion)
+	// Fallback if no pattern matches
+	router.NotFound(controller.NotFound)
 
 	// Icon pack specific router
 	router.Mount("/{pack}", packRouter())
+
 }

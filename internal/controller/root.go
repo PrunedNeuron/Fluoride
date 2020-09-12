@@ -8,14 +8,12 @@ import (
 )
 
 // GetIndex returns the index response
-func GetIndex() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Fluoride, a robust icon pack management tool."))
-	}
+func GetIndex(w http.ResponseWriter, r *http.Request) {
+	render.PlainText(w, r, "Fluoride, a robust icon pack management tool.")
 }
 
 // GetVersion returns the current version of the application
-func GetVersion() http.HandlerFunc {
+func GetVersion(w http.ResponseWriter, r *http.Request) {
 
 	// Version struct to marshal into json
 	type version struct {
@@ -23,7 +21,10 @@ func GetVersion() http.HandlerFunc {
 	}
 	var v = &version{Version: config.Version}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		render.JSON(w, r, v)
-	}
+	render.JSON(w, r, v)
+}
+
+// NotFound handles the case where the url has no mapping
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	render.PlainText(w, r, "The page you're looking for does not exist. 404 error.")
 }
