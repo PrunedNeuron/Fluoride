@@ -46,9 +46,7 @@ func (service *IconService) GetIconByComponent(pack, component string) (*model.I
 
 // SaveIcon upserts an icon
 func (service *IconService) SaveIcon(icon *model.Icon) (int, error) {
-
 	return service.iconStore.SaveIcon(icon)
-
 }
 
 // SaveIcons upserts a list of icons
