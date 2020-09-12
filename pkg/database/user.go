@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fluoride/internal/model"
 	"fluoride/pkg/errors"
+	"fmt"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"
@@ -34,6 +35,37 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 	if err != nil {
 		zap.S().Errorf("Failed to scan return value, error: %s", err.Error())
 		return "", "", err
+	}
+
+	zap.S().Debugw("Creating table for icon packs")
+
+	// Create icon packs table and icon requests table if the user is a dev
+	if user.Role == "developer" {
+		// Create empty icon packs table for the given developer
+		query := fmt.Sprintf(`
+			CREATE TABLE %s_icon_packs (LIKE icon_packs INCLUDING ALL)
+		`, user.Username)
+
+		_, err := dbc.db.Exec(query)
+		if err != nil {
+			zap.S().Errorf("Failed to create new icon pack table, error: %s", err)
+			return "", "", err
+		}
+
+		zap.S().Debugw("Successfully created icon packs table for the given developer")
+
+		// Create empty icon requests table for the given developer
+		query = fmt.Sprintf(`
+			CREATE TABLE %s_icon_requests (LIKE icon_requests INCLUDING ALL)
+		`, user.Username)
+
+		_, err = dbc.db.Exec(query)
+		if err != nil {
+			zap.S().Errorf("Failed to create new icon requests table, error: %s", err)
+			return "", "", err
+		}
+
+		zap.S().Debugw("Successfully created icon requests table for the given developer")
 	}
 
 	zap.S().Debugw("Returning with the username and role of the added user")
