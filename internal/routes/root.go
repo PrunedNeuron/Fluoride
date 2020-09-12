@@ -19,6 +19,6 @@ func Route(router chi.Router) {
 	router.NotFound(controller.NotFound)
 
 	// Icon pack specific router
-	router.Mount("/{pack}", packRouter())
+	router.Mount("/{developer}", devRouter())
 
 }
