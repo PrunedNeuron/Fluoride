@@ -16,12 +16,18 @@ type response struct {
 	Message string       `json:"message,omitempty"`
 	Count   int          `json:"count,omitempty"`
 	Icons   []model.Icon `json:"icons,omitempty"`
+	Packs   []model.Pack `json:"packs,omitempty"`
+	Users   []model.User `json:"users,omitempty"`
 }
 
 var (
 	logger      = zap.S().With("package", "controller.icon")
 	iconStore   = store.NewIconStore()
+	packStore   = store.NewPackStore()
+	userStore   = store.NewUserStore()
 	iconService = service.NewIconService(iconStore)
+	// packService = service.NewPackService(iconStore)
+	userService = service.NewUserService(userStore)
 )
 
 // GetIndex returns the index response
