@@ -2,8 +2,6 @@ package controller
 
 import (
 	"fluoride/internal/model"
-	"fluoride/internal/service"
-	"fluoride/internal/store"
 	"fluoride/pkg/errors"
 	"fmt"
 	"net/http"
@@ -11,20 +9,6 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"go.uber.org/zap"
-)
-
-type response struct {
-	Status  string       `json:"status,omitempty"`
-	Message string       `json:"message,omitempty"`
-	Count   int          `json:"count,omitempty"`
-	Icons   []model.Icon `json:"icons,omitempty"`
-}
-
-var (
-	logger      = zap.S().With("package", "controller.icon")
-	iconStore   = store.NewIconStore()
-	iconService = service.NewIconService(iconStore)
 )
 
 // GetAllIcons responds with a list of all the icons
