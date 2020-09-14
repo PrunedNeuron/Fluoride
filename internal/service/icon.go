@@ -24,52 +24,52 @@ func NewIconService(iconStore store.IconStore) *IconService {
 
 }
 
-// GetAllIcons retrieves a list of all the icon requests in the database
-func (service *IconService) GetAllIcons(pack string) ([]model.Icon, error) {
-	return service.iconStore.GetAllIcons(pack)
+// GetAllIconsByPackByDev retrieves a list of all the icon requests in the database
+func (service *IconService) GetAllIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+	return service.iconStore.GetAllIconsByPackByDev(dev, pack)
 }
 
-// GetPendingIcons retrieves a list of all the icon requests in the database
-func (service *IconService) GetPendingIcons(pack string) ([]model.Icon, error) {
-	return service.iconStore.GetPendingIcons(pack)
+// GetPendingIconsByPackByDev retrieves a list of all the icon requests in the database
+func (service *IconService) GetPendingIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+	return service.iconStore.GetPendingIconsByPackByDev(dev, pack)
 }
 
-// GetDoneIcons retrieves a list of all the icon requests in the database
-func (service *IconService) GetDoneIcons(pack string) ([]model.Icon, error) {
-	return service.iconStore.GetDoneIcons(pack)
+// GetDoneIconsByPackByDev retrieves a list of all the icon requests in the database
+func (service *IconService) GetDoneIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+	return service.iconStore.GetDoneIconsByPackByDev(dev, pack)
 }
 
 // GetIconByComponent returns the matching icon
-func (service *IconService) GetIconByComponent(pack, component string) (*model.Icon, error) {
-	return service.iconStore.GetIconByComponent(pack, component)
+func (service *IconService) GetIconByComponentByPackByDev(dev, pack, component string) (*model.Icon, error) {
+	return service.iconStore.GetIconByComponentByPackByDev(dev, pack, component)
 }
 
 // SaveIcon upserts an icon
-func (service *IconService) SaveIcon(icon *model.Icon) (int, error) {
-	return service.iconStore.SaveIcon(icon)
+func (service *IconService) SaveIcon(dev string, icon *model.Icon) (int, error) {
+	return service.iconStore.SaveIcon(dev, icon)
 }
 
 // SaveIcons upserts a list of icons
-func (service *IconService) SaveIcons(icons []*model.Icon) (int, error) {
-	return service.iconStore.SaveIcons(icons)
+func (service *IconService) SaveIcons(dev string, icons []*model.Icon) (int, error) {
+	return service.iconStore.SaveIcons(dev, icons)
 }
 
-// GetIconCount retrieves the number of icons in the database
-func (service *IconService) GetIconCount(pack string) (int, error) {
-	return service.iconStore.GetIconCount(pack)
+// GetIconCountByDev retrieves the number of icons in the database
+func (service *IconService) GetIconCountByDev(dev string) (int, error) {
+	return service.iconStore.GetIconCountByDev(dev)
 }
 
-// GetPendingIconCount retrieves the number of icons in the database
-func (service *IconService) GetPendingIconCount(pack string) (int, error) {
-	return service.iconStore.GetPendingIconCount(pack)
+// GetPendingIconCountByDev retrieves the number of icons in the database
+func (service *IconService) GetPendingIconCountByDev(dev string) (int, error) {
+	return service.iconStore.GetPendingIconCountByDev(dev)
 }
 
-// GetDoneIconCount retrieves the number of icons in the database
-func (service *IconService) GetDoneIconCount(pack string) (int, error) {
-	return service.iconStore.GetDoneIconCount(pack)
+// GetDoneIconCountByDev retrieves the number of icons in the database
+func (service *IconService) GetDoneIconCountByDev(dev string) (int, error) {
+	return service.iconStore.GetDoneIconCountByDev(dev)
 }
 
 // UpdateStatus sets the new status of the icon request
-func (service *IconService) UpdateStatus(pack, component, status string) (string, error) {
-	return service.iconStore.UpdateStatus(pack, component, status)
+func (service *IconService) UpdateStatus(dev, pack, component, status string) (string, error) {
+	return service.iconStore.UpdateStatus(dev, pack, component, status)
 }

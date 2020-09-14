@@ -11,35 +11,38 @@ import (
 // IconStore is the repository for the Icon model.
 type IconStore interface {
 
-	// Gets all the icons in the DB
-	GetAllIcons(string) ([]model.Icon, error)
+	// Gets all icons by the developer
+	GetAllIconsByDev(string) ([]model.Icon, error)
+
+	// Gets all the icons by the developer
+	GetAllIconsByPackByDev(string, string) ([]model.Icon, error)
 
 	// Gets icons with status = pending
-	GetPendingIcons(string) ([]model.Icon, error)
+	GetPendingIconsByPackByDev(string, string) ([]model.Icon, error)
 
 	// Gets icons with status = done
-	GetDoneIcons(string) ([]model.Icon, error)
-
+	GetDoneIconsByPackByDev(string, string) ([]model.Icon, error)
+	
 	// Gets icons with component = given string
-	GetIconByComponent(string, string) (*model.Icon, error)
+	GetIconByComponentByPackByDev(string, string, string) (*model.Icon, error)
 
 	// Saves a single icon
-	SaveIcon(*model.Icon) (int, error)
+	SaveIcon(string, *model.Icon) (int, error)
 
 	// Saves an array of icons
-	SaveIcons([]*model.Icon) (int, error)
+	SaveIcons(string, []*model.Icon) (int, error)
 
 	// Gets the number of icons
-	GetIconCount(string) (int, error)
+	GetIconCountByDev(string) (int, error)
 
 	// Gets the number of pending icons
-	GetPendingIconCount(string) (int, error)
+	GetPendingIconCountByDev(string) (int, error)
 
 	// Gets the number of done icons
-	GetDoneIconCount(string) (int, error)
+	GetDoneIconCountByDev(string) (int, error)
 
 	// Updates the status of the icon with the given component with the given status
-	UpdateStatus(string, string, string) (string, error)
+	UpdateStatus(string, string, string, string) (string, error)
 }
 
 // NewIconStore creates and returns a new icon store instance

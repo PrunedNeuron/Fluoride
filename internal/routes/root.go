@@ -12,9 +12,6 @@ func Route(router chi.Router) {
 	// Routes to create new model instances
 	router.Mount("/create", creatorRouter())
 
-	// Fallback if no pattern matches
-	router.NotFound(controller.NotFound)
-
 	/* Universal routes */
 	// Get index page
 	router.Get("/", controller.GetIndex)
@@ -22,7 +19,10 @@ func Route(router chi.Router) {
 	router.Get("/version", controller.GetVersion)
 
 	// Icon pack specific router
-	router.Mount("/{developer}", devRouter())
+	router.Mount("/{dev}", devRouter())
+
+	// Fallback if no pattern matches
+	router.NotFound(controller.NotFound)
 
 }
 
@@ -30,8 +30,8 @@ func creatorRouter() chi.Router {
 	router := chi.NewRouter()
 
 	router.Post("/user", controller.CreateUser)
-	// router.Post("/pack", controller.CreatePack)
-	// router.Post("/plan", controller.CreatePlan)
+	router.Post("/pack", controller.CreatePack)
+	router.Post("/plan", controller.CreatePlan)
 
 	return router
 }

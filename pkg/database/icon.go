@@ -4,21 +4,98 @@ import (
 	"database/sql"
 	"fluoride/internal/model"
 	"fluoride/pkg/errors"
+	"fmt"
 	"time"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"
 )
 
-// GetAllIcons gets all the icons
-func (dbc *DBClient) GetAllIcons(pack string) ([]model.Icon, error) {
+// PackExists checks whether the icon pack exists
+func (dbc *DBClient) PackExists(dev, pack string) (bool, error) {
+	zap.S().Debugw("Checking whether the developer exists")
+	if devExists, _ := dbc.DevExists(dev); !devExists {
+		zap.S().Errorf("Developer does not exist, cannot retrieve icon packs")
+		return false, fmt.Errorf("Developer does not exist, cannot retrieve icon packs")
+	}
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_packs.%s_icon_packs
+		WHERE icon_pack_name = $1
+	`, dev)
+
+	_, err := dbc.db.Queryx(query, pack)
+
+	if err == sql.ErrNoRows {
+		zap.S().Debugw("Query returned no rows")
+		return false, err
+	}
+
+	if err != nil {
+		zap.S().Errorf("Failed to scan returned icon pack")
+		return false, err
+	}
+
+	return false, err
+}
+
+// GetAllIconsByDev gets all the icon requests belonging to a developer
+func (dbc *DBClient) GetAllIconsByDev(dev string) ([]model.Icon, error) {
 	icons := []model.Icon{}
-	zap.S().Debugw("Querying the database for all icon requests")
-	rows, err := dbc.db.Queryx(`
-		SELECT * FROM icon_requests
-		WHERE pack = $1
+	zap.S().Debugw("Querying the database for all icon requests belonging to the given developer")
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_requests.%s_icon_requests
 		ORDER BY id DESC
-	`, pack)
+	`, dev)
+
+	rows, err := dbc.db.Queryx(query, dev)
+
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return nil, err
+	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
+		return nil, err
+	}
+
+	zap.S().Debugw("Scanning the result")
+	for rows.Next() {
+		var icon model.Icon
+		err = rows.StructScan(&icon)
+		icons = append(icons, icon)
+
+		if err != nil {
+			zap.S().Errorf("Failed to scan returned icon request")
+			return nil, err
+		}
+	}
+
+	zap.S().Debugw("Returning with the list of all icon packs by the developer")
+	return icons, nil
+}
+
+// GetAllIconsByPackByDev gets all the icons by the developer
+func (dbc *DBClient) GetAllIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+
+	if devExists, _ := dbc.DevExists(dev); !devExists {
+		zap.S().Errorf("Developer does not exist, cannot retrieve icon requests")
+		return nil, fmt.Errorf("Developer does not exist, cannot retrieve icon requests")
+	}
+
+	if packExists, _ := dbc.PackExists(dev, pack); !packExists {
+		zap.S().Errorf("Icon pack does not exist, cannot retrieve icon requests")
+		return nil, fmt.Errorf("Icon pack does not exist, cannot retrieve icon requests")
+	}
+
+	icons := []model.Icon{}
+	zap.S().Debugw("Querying the database for all icon requests belonging to the developer")
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_requests.%s_icon_requests
+		WHERE icon_pack_name = $1
+		ORDER BY id DESC
+	`, dev)
+	rows, err := dbc.db.Queryx(query, pack)
 	zap.S().Debugw("Scanning the result")
 	for rows.Next() {
 		var icon model.Icon
@@ -33,19 +110,26 @@ func (dbc *DBClient) GetAllIcons(pack string) ([]model.Icon, error) {
 		return nil, err
 	}
 
-	zap.S().Debugw("Returning with the list of all icon requests")
+	zap.S().Debugw("Returning with the list of icon requests for the given icon pack")
 	return icons, nil
 }
 
-// GetPendingIcons retrieves the list of icons which are still pending
-func (dbc *DBClient) GetPendingIcons(pack string) ([]model.Icon, error) {
+// GetPendingIconsByPackByDev retrieves the list of icons which are still pending
+func (dbc *DBClient) GetPendingIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+	if devExists, _ := dbc.DevExists(dev); !devExists {
+		zap.S().Errorf("Developer does not exist, cannot retrieve icon requests")
+		return nil, fmt.Errorf("Developer does not exist, cannot retrieve icon requests")
+	}
+
 	icons := []model.Icon{}
 	zap.S().Debugw("Querying the database for icons with status pending")
-	rows, err := dbc.db.Queryx(`
-		SELECT * FROM icon_requests
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_requests.%s_icon_requests
 		WHERE pack = $1 AND status = 'pending'
 		ORDER BY id DESC
-	`, pack)
+	`, dev)
+
+	rows, err := dbc.db.Queryx(query, pack)
 	zap.S().Debugw("Scanning the result")
 
 	for rows.Next() {
@@ -63,15 +147,23 @@ func (dbc *DBClient) GetPendingIcons(pack string) ([]model.Icon, error) {
 	return icons, nil
 }
 
-// GetDoneIcons retrieves the list of icons which are still pending
-func (dbc *DBClient) GetDoneIcons(pack string) ([]model.Icon, error) {
+// GetDoneIconsByPackByDev retrieves the list of icons which are still pending
+func (dbc *DBClient) GetDoneIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+	if devExists, _ := dbc.DevExists(dev); !devExists {
+		zap.S().Errorf("Developer does not exist, cannot retrieve icon requests")
+		return nil, fmt.Errorf("Developer does not exist, cannot retrieve icon requests")
+	}
+
 	icons := []model.Icon{}
 	zap.S().Debugw("Querying the database for icons with status pending")
-	rows, err := dbc.db.Queryx(`
-		SELECT * FROM icon_requests
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_requests.%s_icon_requests
 		WHERE pack = $1 AND status = 'done'
 		ORDER BY id DESC
-	`, pack)
+	`, dev)
+
+	rows, err := dbc.db.Queryx(query, pack)
 	zap.S().Debugw("Scanning the result")
 
 	for rows.Next() {
@@ -89,13 +181,16 @@ func (dbc *DBClient) GetDoneIcons(pack string) ([]model.Icon, error) {
 	return icons, nil
 }
 
-// GetIconByComponent returns the matching icon
-func (dbc *DBClient) GetIconByComponent(pack, component string) (*model.Icon, error) {
+// GetIconByComponentByPackByDev returns the matching icon
+func (dbc *DBClient) GetIconByComponentByPackByDev(dev, pack, component string) (*model.Icon, error) {
 	zap.S().Debugw("Querying the database with the given component")
-	row := dbc.db.QueryRowx(`
-		SELECT * FROM icon_requests
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_requests.%s_icon_requests
 		WHERE pack = $1 AND component = $2
-	`, pack, component)
+	`, dev)
+
+	row := dbc.db.QueryRowx(query, pack, component)
 
 	zap.S().Debugw("Scanning the selected icon request")
 	var icon model.Icon
@@ -113,15 +208,18 @@ func (dbc *DBClient) GetIconByComponent(pack, component string) (*model.Icon, er
 
 // SaveIcon upserts the icon to the database and updates requester count on conflict
 // !UNUSED
-func (dbc *DBClient) SaveIcon(icon *model.Icon) (int, error) {
+func (dbc *DBClient) SaveIcon(dev string, icon *model.Icon) (int, error) {
 	zap.S().Debugw("Upserting the given icon request into the database")
-	row := dbc.db.QueryRowx(`
-		INSERT INTO icon_requests (name, component, url)
-		VALUES ($1, $2, $3)
-		ON CONFLICT (pack, component) DO UPDATE
+
+	query := fmt.Sprintf(`
+		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (icon_pack_name, component) DO UPDATE
 		SET requesters = icon_requests.requesters + 1
 		RETURNING *
-	`, icon.Name, icon.Component, icon.URL)
+	`, dev)
+
+	row := dbc.db.QueryRowx(query, icon.Name, icon.Component, icon.URL, icon.Pack)
 
 	zap.S().Debugw("Scanning the inserted icon request")
 
@@ -137,17 +235,20 @@ func (dbc *DBClient) SaveIcon(icon *model.Icon) (int, error) {
 }
 
 // SaveIcons upserts the list of icons to the database and updates requester counts on conflict
-func (dbc *DBClient) SaveIcons(icons []*model.Icon) (int, error) {
+func (dbc *DBClient) SaveIcons(dev string, icons []*model.Icon) (int, error) {
 	zap.S().Debugw("Inserting the list of icons into the database")
 
 	for _, icon := range icons {
 		zap.S().Debugw("Executing the query...")
-		_, err := dbc.db.Exec(`
-		INSERT INTO icon_requests (name, component, url, pack, created_at, updated_at)
+
+		query := fmt.Sprintf(`
+		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (pack, component) DO UPDATE
+		ON CONFLICT (icon_pack_name, component) DO UPDATE
 		SET (requesters, updated_at) = (icon_requests.requesters + 1, CURRENT_TIMESTAMP)
-	`, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
+	`, dev)
+
+		_, err := dbc.db.Exec(query, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
 
 		if err != nil {
 			zap.S().Debugw("Failed to insert icon")
@@ -156,18 +257,18 @@ func (dbc *DBClient) SaveIcons(icons []*model.Icon) (int, error) {
 
 	}
 
-	zap.S().Debugw("Returning with the number of icons")
+	zap.S().Debugw("Returning with the number of icons inserted")
 
 	// Needs fix, updated icons also returned as inserted icon count
 	return len(icons), nil
 }
 
-// GetIconCount returns the number of icon request in the database
-func (dbc *DBClient) GetIconCount(pack string) (int, error) {
-	row := dbc.db.QueryRowx(`
-		SELECT COUNT(*) AS COUNT FROM icon_requests
-		WHERE pack = $1
-	`, pack)
+// GetIconCountByDev returns the number of icon requests owned by the dev
+func (dbc *DBClient) GetIconCountByDev(dev string) (int, error) {
+	query := fmt.Sprintf(`
+		SELECT COUNT(*) AS COUNT FROM icon_requests.%s_icon_requests
+	`, dev)
+	row := dbc.db.QueryRowx(query)
 
 	var count int
 	err := row.Scan(&count)
@@ -180,12 +281,13 @@ func (dbc *DBClient) GetIconCount(pack string) (int, error) {
 	return count, nil
 }
 
-// GetPendingIconCount returns the number of icon request in the database
-func (dbc *DBClient) GetPendingIconCount(pack string) (int, error) {
-	row := dbc.db.QueryRowx(`
-		SELECT COUNT(*) AS COUNT FROM icon_requests
-		WHERE pack = $1 AND status = 'pending'
-	`, pack)
+// GetPendingIconCountByDev returns the number of icon request in the database
+func (dbc *DBClient) GetPendingIconCountByDev(dev string) (int, error) {
+	query := fmt.Sprintf(`
+		SELECT COUNT(*) AS COUNT FROM icon_requests.%s_icon_requests
+		WHERE status = 'pending'
+	`, dev)
+	row := dbc.db.QueryRowx(query, dev)
 
 	var count int
 	err := row.Scan(&count)
@@ -198,12 +300,15 @@ func (dbc *DBClient) GetPendingIconCount(pack string) (int, error) {
 	return count, nil
 }
 
-// GetDoneIconCount returns the number of icon request in the database
-func (dbc *DBClient) GetDoneIconCount(pack string) (int, error) {
-	row := dbc.db.QueryRowx(`
-		SELECT COUNT(*) AS COUNT FROM icon_requests
-		WHERE pack = $1 AND status = 'done'
-	`, pack)
+// GetDoneIconCountByDev returns the number of icon request in the database
+func (dbc *DBClient) GetDoneIconCountByDev(dev string) (int, error) {
+
+	query := fmt.Sprintf(`
+		SELECT COUNT(*) AS COUNT FROM icon_requests.%s_icon_requests
+		WHERE AND status = 'done'
+	`, dev)
+
+	row := dbc.db.QueryRowx(query)
 
 	var count int
 	err := row.Scan(&count)
@@ -217,13 +322,14 @@ func (dbc *DBClient) GetDoneIconCount(pack string) (int, error) {
 }
 
 // UpdateStatus updates the status of the icon request (pending | complete)
-func (dbc *DBClient) UpdateStatus(pack, component, status string) (string, error) {
-	row := dbc.db.QueryRowx(`
-		UPDATE icon_requests
+func (dbc *DBClient) UpdateStatus(dev, pack, component, status string) (string, error) {
+	query := fmt.Sprintf(`
+		UPDATE icon_requests.%s_icon_requests
 		SET status = $1
 		WHERE pack = $2 AND component = $3
 		RETURNING status	
-	`, status, pack, component)
+	`, dev)
+	row := dbc.db.QueryRowx(query, status, pack, component)
 
 	var newStatus string
 	err := row.Scan(&newStatus)

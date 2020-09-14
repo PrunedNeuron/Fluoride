@@ -17,6 +17,8 @@ type response struct {
 	Count   int          `json:"count,omitempty"`
 	Icons   []model.Icon `json:"icons,omitempty"`
 	Packs   []model.Pack `json:"packs,omitempty"`
+	Devs    []model.User `json:"devs,omitempty"`
+	Admins  []model.User `json:"admins,omitempty"`
 	Users   []model.User `json:"users,omitempty"`
 }
 
@@ -24,9 +26,11 @@ var (
 	logger      = zap.S().With("package", "controller.icon")
 	iconStore   = store.NewIconStore()
 	packStore   = store.NewPackStore()
+	devStore    = store.NewDevStore()
 	userStore   = store.NewUserStore()
 	iconService = service.NewIconService(iconStore)
-	// packService = service.NewPackService(iconStore)
+	packService = service.NewPackService(packStore)
+	devService  = service.NewDevService(devStore)
 	userService = service.NewUserService(userStore)
 )
 
