@@ -12,14 +12,16 @@ func Route(router chi.Router) {
 	// Routes to create new model instances
 	router.Mount("/create", creatorRouter())
 
-	/* Universal routes */
 	// Get index page
 	router.Get("/", controller.GetIndex)
 	// Get current version
 	router.Get("/version", controller.GetVersion)
 
+	// Get all developers
+	router.Get("/developers", controller.GetDevs)
+
 	// Icon pack specific router
-	router.Mount("/{dev}", devRouter())
+	router.Mount("/{developer}", devRouter())
 
 	// Fallback if no pattern matches
 	router.NotFound(controller.NotFound)

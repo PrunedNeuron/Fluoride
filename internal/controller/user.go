@@ -54,6 +54,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	username, role, err := userService.CreateUser(user)
 
+	if err != nil {
+		logger.Errorw("Failed to create new user, error: %s", err)
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("user may already exist")))
+		return
+	}
+
 	render.JSON(w, r, &response{
 		Status:  "success",
 		Message: "Created " + role + " with username " + username,

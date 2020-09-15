@@ -1,16 +1,45 @@
 package database
 
 import (
+	"database/sql"
 	"fluoride/internal/model"
+	"fluoride/pkg/errors"
 	"fmt"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"
 )
 
+// PackExists checks whether the icon pack exists
+func (dbc *DBClient) PackExists(dev, pack string) (bool, error) {
+	zap.S().Debugw("Checking whether the developer exists")
+	if devExists, _ := dbc.DevExists(dev); !devExists {
+		zap.S().Errorf("Developer does not exist, cannot retrieve icon packs")
+		return false, fmt.Errorf("Developer does not exist, cannot retrieve icon packs")
+	}
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_packs.%s_icon_packs
+		WHERE icon_pack_name = $1
+	`, dev)
+
+	_, err := dbc.db.Queryx(query, pack)
+
+	if err == sql.ErrNoRows {
+		zap.S().Debugw("Query returned no rows")
+		return false, err
+	}
+
+	if err != nil {
+		zap.S().Errorf("Failed to scan returned icon pack")
+		return false, err
+	}
+
+	return false, err
+}
+
 // CreatePack creates a new icon pack record
 func (dbc *DBClient) CreatePack(pack model.Pack) (string, error) {
-
 	zap.S().Debugw("Make sure developer exists before attempting to create a new icon pack")
 	if devExists, _ := dbc.DevExists(pack.DevUsername); !devExists {
 		zap.S().Errorf("Developer does not exist, cannot create icon pack")
@@ -36,11 +65,68 @@ func (dbc *DBClient) CreatePack(pack model.Pack) (string, error) {
 
 	zap.S().Debugw("Returning with the name of the new icon pack")
 	return packName, nil
-
 }
 
-// GetAllPacks gets all the icon packs in the database
-func (dbc *DBClient) GetAllPacks() ([]model.Pack, error) {
+// GetPacksByDev gets all the icon packs
+func (dbc *DBClient) GetPacksByDev(dev string) ([]model.Pack, error) {
+	packs := []model.Pack{}
+	zap.S().Debugw("Querying the database for all icon packs by given developer")
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_packs.%s_icon_packs
+		ORDER BY id DESC
+	`, dev)
+
+	rows, err := dbc.db.Queryx(query)
+
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return nil, err
+	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
+		return nil, err
+	}
+
+	zap.S().Debugw("Scanning the result")
+	for rows.Next() {
+		var pack model.Pack
+		err = rows.StructScan(&pack)
+		packs = append(packs, pack)
+	}
+
+	zap.S().Debugw("Returning with the list of all icon packs by the developer")
+	return packs, nil
+}
+
+// GetPackCountByDev gets the number of icon packs by the dev
+func (dbc *DBClient) GetPackCountByDev(dev string) (int, error) {
+
+	zap.S().Debugw("Querying the database for all icon packs by given developer")
+
+	query := fmt.Sprintf(`
+		SELECT COUNT(*) FROM icon_packs.%s_icon_packs
+	`, dev)
+
+	row := dbc.db.QueryRowx(query)
+
+	zap.S().Debugw("Scanning the result")
+	var count int
+	err := row.Scan(&count)
+
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return -1, err
+	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
+		return -1, err
+	}
+
+	zap.S().Debugw("Returning with the number of icon packs by the developer")
+	return count, nil
+}
+
+// GetPacks gets all the icon packs in the database
+func (dbc *DBClient) GetPacks() ([]model.Pack, error) {
 	// unimplemented
 	return nil, nil
 }

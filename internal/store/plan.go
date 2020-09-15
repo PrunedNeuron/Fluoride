@@ -12,10 +12,10 @@ import (
 type PlanStore interface {
 
 	// Create new plan
-	CreatePlan(model.Plan) (string, error)
+	CreatePlan(*model.Plan) (string, error)
 
 	// Gets all the icon packs by the developer
-	GetAllPlans() ([]model.Plan, error)
+	GetPlans() ([]model.Plan, error)
 }
 
 // NewPlanStore creates and returns a new plan store instance

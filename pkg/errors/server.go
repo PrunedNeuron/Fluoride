@@ -11,6 +11,7 @@ type ErrorResponse struct {
 	Error          error  `json:"-"`               // low level runtime err
 	HTTPStatusCode int    `json:"-"`               // http status code
 	Message        string `json:"message"`         // high level status message
+	Status         string `json:"status"`          // status message (success | failure)
 	ErrorCode      int    `json:"code,omitempty"`  // application level error code
 	ErrorText      string `json:"error,omitempty"` // application level error message
 }
@@ -18,6 +19,7 @@ type ErrorResponse struct {
 // ErrNotFound is a predefined 404 error
 var ErrNotFound = &ErrorResponse{
 	HTTPStatusCode: 404,
+	Status:         "failure",
 	Message:        "resource not found",
 }
 
@@ -37,6 +39,7 @@ func ErrInvalidRequest(err error) render.Renderer {
 	return &ErrorResponse{
 		Error:          err,
 		HTTPStatusCode: http.StatusBadRequest,
+		Status:         "failure",
 		Message:        "invalid request",
 		ErrorText:      errorText,
 	}
@@ -53,6 +56,7 @@ func ErrInternalServer(err error) render.Renderer {
 	return &ErrorResponse{
 		Error:          err,
 		HTTPStatusCode: http.StatusInternalServerError,
+		Status:         "failure",
 		Message:        "server error",
 		ErrorText:      errorText,
 	}

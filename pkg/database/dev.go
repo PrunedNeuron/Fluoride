@@ -51,8 +51,8 @@ func (dbc *DBClient) DevExists(dev string) (bool, error) {
 	return true, nil
 }
 
-// GetAllDevs gets all the icon packs
-func (dbc *DBClient) GetAllDevs() ([]model.User, error) {
+// GetDevs gets all the icon packs
+func (dbc *DBClient) GetDevs() ([]model.User, error) {
 	devs := []model.User{}
 	zap.S().Debugw("Querying the database for all icon pack developers")
 	rows, err := dbc.db.Queryx(`
@@ -76,43 +76,6 @@ func (dbc *DBClient) GetAllDevs() ([]model.User, error) {
 
 	zap.S().Debugw("Returning with the list of all icon pack developers")
 	return devs, nil
-}
-
-// GetPacksByDev gets all the icon packs
-func (dbc *DBClient) GetPacksByDev(dev string) ([]model.Pack, error) {
-	packs := []model.Pack{}
-	zap.S().Debugw("Querying the database for all icon packs by given developer")
-
-	query := fmt.Sprintf(`
-		SELECT * FROM icon_packs.%s_icon_packs
-		ORDER BY id DESC
-	`, dev)
-
-	rows, err := dbc.db.Queryx(query)
-
-	if err == sql.ErrNoRows {
-		zap.S().Errorf("No rows in the database!")
-		return nil, err
-	} else if err != nil {
-		zap.S().Errorf(errors.ErrDatabase.Error())
-		return nil, err
-	}
-
-	zap.S().Debugw("Scanning the result")
-	for rows.Next() {
-		var pack model.Pack
-		err = rows.StructScan(&pack)
-		packs = append(packs, pack)
-	}
-
-	zap.S().Debugw("Returning with the list of all icon packs by the developer")
-	return packs, nil
-}
-
-// GetIconsByDev gets all the icon packs
-func (dbc *DBClient) GetIconsByDev(dev string) ([]model.Icon, error) {
-	// unimplemented
-	return nil, nil
 }
 
 // GetDevCount gets the number of all developers

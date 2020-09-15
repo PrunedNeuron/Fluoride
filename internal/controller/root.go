@@ -17,9 +17,10 @@ type response struct {
 	Count   int          `json:"count,omitempty"`
 	Icons   []model.Icon `json:"icons,omitempty"`
 	Packs   []model.Pack `json:"packs,omitempty"`
-	Devs    []model.User `json:"devs,omitempty"`
+	Devs    []model.User `json:"developers,omitempty"`
 	Admins  []model.User `json:"admins,omitempty"`
 	Users   []model.User `json:"users,omitempty"`
+	Plans   []model.Plan `json:"plans,omitempty"`
 }
 
 var (
@@ -28,10 +29,12 @@ var (
 	packStore   = store.NewPackStore()
 	devStore    = store.NewDevStore()
 	userStore   = store.NewUserStore()
+	planStore   = store.NewPlanStore()
 	iconService = service.NewIconService(iconStore)
 	packService = service.NewPackService(packStore)
 	devService  = service.NewDevService(devStore)
 	userService = service.NewUserService(userStore)
+	planService = service.NewPlanService(planStore)
 )
 
 // GetIndex returns the index response

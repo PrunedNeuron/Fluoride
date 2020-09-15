@@ -15,7 +15,7 @@ type DevStore interface {
 	DevExists(string) (bool, error)
 
 	// Get all the developers in the database
-	GetAllDevs() ([]model.User, error)
+	GetDevs() ([]model.User, error)
 
 	// Get packs by the developer
 	GetPacksByDev(string) ([]model.Pack, error)

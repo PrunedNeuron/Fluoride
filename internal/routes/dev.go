@@ -12,6 +12,7 @@ func devRouter() chi.Router {
 
 	router.Get("/packs", controller.GetPacksByDev)
 	router.Get("/packs/count", controller.GetPackCountByDev)
+	router.Get("/icons", controller.GetIconsByDev)
 	router.Get("/icons/count", controller.GetIconCountByDev)
 
 	// Packs

@@ -24,9 +24,14 @@ func NewIconService(iconStore store.IconStore) *IconService {
 
 }
 
-// GetAllIconsByPackByDev retrieves a list of all the icon requests in the database
-func (service *IconService) GetAllIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
-	return service.iconStore.GetAllIconsByPackByDev(dev, pack)
+// GetIconsByDev retrieves a list of all the icon requests belonging to the dev
+func (service *IconService) GetIconsByDev(dev string) ([]model.Icon, error) {
+	return service.iconStore.GetIconsByDev(dev)
+}
+
+// GetIconsByPackByDev retrieves a list of all the icon requests in the database
+func (service *IconService) GetIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+	return service.iconStore.GetIconsByPackByDev(dev, pack)
 }
 
 // GetPendingIconsByPackByDev retrieves a list of all the icon requests in the database
@@ -39,7 +44,7 @@ func (service *IconService) GetDoneIconsByPackByDev(dev, pack string) ([]model.I
 	return service.iconStore.GetDoneIconsByPackByDev(dev, pack)
 }
 
-// GetIconByComponent returns the matching icon
+// GetIconByComponentByPackByDev returns the matching icon
 func (service *IconService) GetIconByComponentByPackByDev(dev, pack, component string) (*model.Icon, error) {
 	return service.iconStore.GetIconByComponentByPackByDev(dev, pack, component)
 }
@@ -69,7 +74,7 @@ func (service *IconService) GetDoneIconCountByDev(dev string) (int, error) {
 	return service.iconStore.GetDoneIconCountByDev(dev)
 }
 
-// UpdateStatus sets the new status of the icon request
-func (service *IconService) UpdateStatus(dev, pack, component, status string) (string, error) {
-	return service.iconStore.UpdateStatus(dev, pack, component, status)
+// UpdateIconStatus sets the new status of the icon request
+func (service *IconService) UpdateIconStatus(dev, pack, component, status string) (string, error) {
+	return service.iconStore.UpdateIconStatus(dev, pack, component, status)
 }

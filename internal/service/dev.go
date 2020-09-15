@@ -3,7 +3,6 @@ package service
 import (
 	"fluoride/internal/model"
 	"fluoride/internal/store"
-	"fluoride/pkg/errors"
 
 	"go.uber.org/zap"
 )
@@ -25,17 +24,17 @@ func NewDevService(devStore store.DevStore) *DevService {
 
 }
 
-// GetPacksByDev creates a new user
-func (service *DevService) GetPacksByDev(dev string) ([]model.Pack, error) {
-	devExists, err := service.devStore.DevExists(dev)
+// GetDevs gets all the users that are developers
+func (service *DevService) GetDevs() ([]model.User, error) {
+	return service.devStore.GetDevs()
+}
 
-	if err != nil {
-		return nil, err
-	}
+// GetDevCount gets the number of developers in the database
+func (service *DevService) GetDevCount() (int, error) {
+	return service.devStore.GetDevCount()
+}
 
-	if devExists {
-		return service.devStore.GetPacksByDev(dev)
-	}
-
-	return nil, errors.ErrDatabaseRelationNotFound
+// GetDevByUsername gets the dev with the matching username
+func (service *DevService) GetDevByUsername(dev string) (model.User, error) {
+	return service.devStore.GetDevByUsername(dev)
 }

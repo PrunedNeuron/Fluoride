@@ -24,7 +24,7 @@ func (dbc *DBClient) PlansExists() (bool, error) {
 }
 
 // CreatePlan creates a new plan record
-func (dbc *DBClient) CreatePlan(plan model.Plan) (string, error) {
+func (dbc *DBClient) CreatePlan(plan *model.Plan) (string, error) {
 
 	zap.S().Debugw("Make sure plans table exists before attempting to insert into it")
 	if plansExists, _ := dbc.PlansExists(); !plansExists {
@@ -54,8 +54,8 @@ func (dbc *DBClient) CreatePlan(plan model.Plan) (string, error) {
 
 }
 
-// GetAllPlans gets all the plans
-func (dbc *DBClient) GetAllPlans() ([]model.Plan, error) {
+// GetPlans gets all the plans
+func (dbc *DBClient) GetPlans() ([]model.Plan, error) {
 	zap.S().Debugw("Make sure plans table exists before attempting to select from it")
 	if plansExists, _ := dbc.PlansExists(); !plansExists {
 		zap.S().Errorf("Plans table does not exist, cannot retrieve plans")

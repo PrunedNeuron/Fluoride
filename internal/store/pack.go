@@ -14,8 +14,15 @@ type PackStore interface {
 	// Create new icon pack
 	CreatePack(model.Pack) (string, error)
 
-	// Gets all the icon packs by the developer
-	GetAllPacks() ([]model.Pack, error)
+	// Gets all the icon packs in the database
+	//!!!UNIMPLEMENTED
+	GetPacks() ([]model.Pack, error)
+
+	// Gets all the icon packs by the given dev
+	GetPacksByDev(string) ([]model.Pack, error)
+
+	// Gets the number of icon packs by the developer
+	GetPackCountByDev(string) (int, error)
 }
 
 // NewPackStore creates and returns a new icon store instance

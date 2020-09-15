@@ -28,3 +28,13 @@ func NewPackService(packStore store.PackStore) *PackService {
 func (service *PackService) CreatePack(pack model.Pack) (string, error) {
 	return service.packStore.CreatePack(pack)
 }
+
+// GetPacksByDev gets the list of all icon packs by the given dev
+func (service *PackService) GetPacksByDev(dev string) ([]model.Pack, error) {
+	return service.packStore.GetPacksByDev(dev)
+}
+
+// GetPackCountByDev gets the number of icon packs by the dev
+func (service *PackService) GetPackCountByDev(dev string) (int, error) {
+	return service.packStore.GetPackCountByDev(dev)
+}

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fluoride/internal/model"
 	"fluoride/pkg/errors"
 	"fmt"
 	"net/http"
@@ -9,24 +10,58 @@ import (
 	"github.com/go-chi/render"
 )
 
-// GetPacksByDev creates a new user
-func GetPacksByDev(w http.ResponseWriter, r *http.Request) {
+// GetDevs renders all the devs in the database
+func GetDevs(w http.ResponseWriter, r *http.Request) {
+	devs, err := devService.GetDevs()
+
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Devs:   devs,
+	})
+}
+
+// GetDevCount renders the number of devs in the database
+func GetDevCount(w http.ResponseWriter, r *http.Request) {
+
+	count, err := devService.GetDevCount()
+
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Count:  count,
+	})
+}
+
+// GetDevByUsername renders the dev with the given username
+func GetDevByUsername(w http.ResponseWriter, r *http.Request) {
 
 	// Get dev from url
-	dev := chi.URLParam(r, "dev")
+	username := chi.URLParam(r, "developer")
 
-	if dev == "" {
+	if username == "" {
 		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid dev")))
 		return
 	}
 
-	packs, err := devService.GetPacksByDev(dev)
+	dev, err := devService.GetDevByUsername(username)
 
-	if err == errors.ErrDatabaseNotFound {
-		render.Render(w, r, errors.ErrNotFound)
-	} else if err != nil {
+	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
-	} else {
-		render.JSON(w, r, packs)
+		return
 	}
+
+	var devs []model.User
+	devs = append(devs, dev)
+
+	render.JSON(w, r, &response{
+		Status: "success",
+		Devs:   devs,
+	})
 }

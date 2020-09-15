@@ -11,8 +11,31 @@ import (
 	"github.com/go-chi/render"
 )
 
-// GetAllIcons responds with a list of all the icons
-func GetAllIcons(w http.ResponseWriter, r *http.Request) {
+// GetIconsByDev responds with a list of all the icons
+func GetIconsByDev(w http.ResponseWriter, r *http.Request) {
+
+	// Get dev from url
+	dev := chi.URLParam(r, "developer")
+
+	if dev == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid dev")))
+		return
+	}
+
+	list, err := iconService.GetIconsByDev(dev)
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status:  "success",
+		Message: "retrieved " + strconv.Itoa(len(list)) + " icons",
+		Icons:   list,
+	})
+}
+
+// GetIconsByPackByDev responds with a list of all the icons
+func GetIconsByPackByDev(w http.ResponseWriter, r *http.Request) {
 
 	// Get dev from url
 	dev := chi.URLParam(r, "developer")
@@ -30,7 +53,7 @@ func GetAllIcons(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list, err := iconService.GetAllIconsByPackByDev(dev, pack)
+	list, err := iconService.GetIconsByPackByDev(dev, pack)
 	if err != nil {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
@@ -42,8 +65,8 @@ func GetAllIcons(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetPendingIcons responds with a list of all the icons
-func GetPendingIcons(w http.ResponseWriter, r *http.Request) {
+// GetPendingIconsByPackByDev responds with a list of all the icons
+func GetPendingIconsByPackByDev(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
 	dev := chi.URLParam(r, "developer")
 
@@ -72,8 +95,8 @@ func GetPendingIcons(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetDoneIcons responds with a list of all the icons
-func GetDoneIcons(w http.ResponseWriter, r *http.Request) {
+// GetDoneIconsByPackByDev responds with a list of all the icons
+func GetDoneIconsByPackByDev(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
 	dev := chi.URLParam(r, "developer")
 
@@ -102,8 +125,8 @@ func GetDoneIcons(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetIconByComponent responds with the matching icon
-func GetIconByComponent(w http.ResponseWriter, r *http.Request) {
+// GetIconByComponentByPackByDev responds with the matching icon
+func GetIconByComponentByPackByDev(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
 	dev := chi.URLParam(r, "developer")
 
@@ -225,8 +248,8 @@ func SaveIcons(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetIconCount responds with the number of icon requests
-func GetIconCount(w http.ResponseWriter, r *http.Request) {
+// GetIconCountByDev responds with the number of icon requests
+func GetIconCountByDev(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
 	dev := chi.URLParam(r, "developer")
 
@@ -246,8 +269,8 @@ func GetIconCount(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetPendingIconCount responds with the number of icon requests
-func GetPendingIconCount(w http.ResponseWriter, r *http.Request) {
+// GetPendingIconCountByDev responds with the number of icon requests
+func GetPendingIconCountByDev(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
 	dev := chi.URLParam(r, "dev")
 
@@ -267,8 +290,8 @@ func GetPendingIconCount(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetDoneIconCount responds with the number of icon requests
-func GetDoneIconCount(w http.ResponseWriter, r *http.Request) {
+// GetDoneIconCountByDev responds with the number of icon requests
+func GetDoneIconCountByDev(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
 	dev := chi.URLParam(r, "dev")
 
@@ -288,8 +311,8 @@ func GetDoneIconCount(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// UpdateStatus takes the new status and updates the database
-func UpdateStatus(w http.ResponseWriter, r *http.Request) {
+// UpdateIconStatus takes the new status and updates the database
+func UpdateIconStatus(w http.ResponseWriter, r *http.Request) {
 
 	type request struct {
 		Component string `json:"component"`
@@ -340,7 +363,7 @@ func UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status, err := iconService.UpdateStatus(dev, pack, req.Component, req.Status)
+	status, err := iconService.UpdateIconStatus(dev, pack, req.Component, req.Status)
 
 	render.JSON(w, r, &response{
 		Status:  "success",

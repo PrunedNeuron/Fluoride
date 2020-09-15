@@ -11,72 +11,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// PackExists checks whether the icon pack exists
-func (dbc *DBClient) PackExists(dev, pack string) (bool, error) {
-	zap.S().Debugw("Checking whether the developer exists")
-	if devExists, _ := dbc.DevExists(dev); !devExists {
-		zap.S().Errorf("Developer does not exist, cannot retrieve icon packs")
-		return false, fmt.Errorf("Developer does not exist, cannot retrieve icon packs")
-	}
-
-	query := fmt.Sprintf(`
-		SELECT * FROM icon_packs.%s_icon_packs
-		WHERE icon_pack_name = $1
-	`, dev)
-
-	_, err := dbc.db.Queryx(query, pack)
-
-	if err == sql.ErrNoRows {
-		zap.S().Debugw("Query returned no rows")
-		return false, err
-	}
-
-	if err != nil {
-		zap.S().Errorf("Failed to scan returned icon pack")
-		return false, err
-	}
-
-	return false, err
-}
-
-// GetAllIconsByDev gets all the icon requests belonging to a developer
-func (dbc *DBClient) GetAllIconsByDev(dev string) ([]model.Icon, error) {
-	icons := []model.Icon{}
-	zap.S().Debugw("Querying the database for all icon requests belonging to the given developer")
-
-	query := fmt.Sprintf(`
-		SELECT * FROM icon_requests.%s_icon_requests
-		ORDER BY id DESC
-	`, dev)
-
-	rows, err := dbc.db.Queryx(query, dev)
-
-	if err == sql.ErrNoRows {
-		zap.S().Errorf("No rows in the database!")
-		return nil, err
-	} else if err != nil {
-		zap.S().Errorf(errors.ErrDatabase.Error())
-		return nil, err
-	}
-
-	zap.S().Debugw("Scanning the result")
-	for rows.Next() {
-		var icon model.Icon
-		err = rows.StructScan(&icon)
-		icons = append(icons, icon)
-
-		if err != nil {
-			zap.S().Errorf("Failed to scan returned icon request")
-			return nil, err
-		}
-	}
-
-	zap.S().Debugw("Returning with the list of all icon packs by the developer")
-	return icons, nil
-}
-
-// GetAllIconsByPackByDev gets all the icons by the developer
-func (dbc *DBClient) GetAllIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
+// GetIconsByPackByDev gets all the icons by the developer
+func (dbc *DBClient) GetIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
 
 	if devExists, _ := dbc.DevExists(dev); !devExists {
 		zap.S().Errorf("Developer does not exist, cannot retrieve icon requests")
@@ -206,61 +142,39 @@ func (dbc *DBClient) GetIconByComponentByPackByDev(dev, pack, component string) 
 	return &icon, nil
 }
 
-// SaveIcon upserts the icon to the database and updates requester count on conflict
-// !UNUSED
-func (dbc *DBClient) SaveIcon(dev string, icon *model.Icon) (int, error) {
-	zap.S().Debugw("Upserting the given icon request into the database")
+// GetIconsByDev gets all the icon packs by the dev
+func (dbc *DBClient) GetIconsByDev(dev string) ([]model.Icon, error) {
+	icons := []model.Icon{}
+	zap.S().Debugw("Querying the database for all icon requests by given developer")
 
 	query := fmt.Sprintf(`
-		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name)
-		VALUES ($1, $2, $3, $4)
-		ON CONFLICT (icon_pack_name, component) DO UPDATE
-		SET requesters = icon_requests.requesters + 1
-		RETURNING *
+		SELECT * FROM icon_requests.%s_icon_requests
+		ORDER BY id DESC
 	`, dev)
 
-	row := dbc.db.QueryRowx(query, icon.Name, icon.Component, icon.URL, icon.Pack)
+	rows, err := dbc.db.Queryx(query)
 
-	zap.S().Debugw("Scanning the inserted icon request")
-
-	var returned model.Icon
-	err := row.StructScan(&returned)
-
-	if err != nil {
-		return returned.ID, err
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return nil, err
+	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
+		return nil, err
 	}
 
-	zap.S().Debugw("Returning with the inserted icon request ID")
-	return returned.ID, nil
-}
-
-// SaveIcons upserts the list of icons to the database and updates requester counts on conflict
-func (dbc *DBClient) SaveIcons(dev string, icons []*model.Icon) (int, error) {
-	zap.S().Debugw("Inserting the list of icons into the database")
-
-	for _, icon := range icons {
-		zap.S().Debugw("Executing the query...")
-
-		query := fmt.Sprintf(`
-		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (icon_pack_name, component) DO UPDATE
-		SET (requesters, updated_at) = (icon_requests.requesters + 1, CURRENT_TIMESTAMP)
-	`, dev)
-
-		_, err := dbc.db.Exec(query, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
-
+	zap.S().Debugw("Scanning the result")
+	for rows.Next() {
+		var icon model.Icon
+		err = rows.StructScan(&icon)
+		icons = append(icons, icon)
 		if err != nil {
-			zap.S().Debugw("Failed to insert icon")
-			return -1, err
+			zap.S().Errorf("Failed to scan result")
+			return nil, err
 		}
-
 	}
 
-	zap.S().Debugw("Returning with the number of icons inserted")
-
-	// Needs fix, updated icons also returned as inserted icon count
-	return len(icons), nil
+	zap.S().Debugw("Returning with the list of all icon requests belonging to the developer")
+	return icons, nil
 }
 
 // GetIconCountByDev returns the number of icon requests owned by the dev
@@ -321,8 +235,65 @@ func (dbc *DBClient) GetDoneIconCountByDev(dev string) (int, error) {
 	return count, nil
 }
 
-// UpdateStatus updates the status of the icon request (pending | complete)
-func (dbc *DBClient) UpdateStatus(dev, pack, component, status string) (string, error) {
+// SaveIcon upserts the icon to the database and updates requester count on conflict
+// !UNUSED
+func (dbc *DBClient) SaveIcon(dev string, icon *model.Icon) (int, error) {
+	zap.S().Debugw("Upserting the given icon request into the database")
+
+	query := fmt.Sprintf(`
+		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (icon_pack_name, component) DO UPDATE
+		SET requesters = icon_requests.requesters + 1
+		RETURNING *
+	`, dev)
+
+	row := dbc.db.QueryRowx(query, icon.Name, icon.Component, icon.URL, icon.Pack)
+
+	zap.S().Debugw("Scanning the inserted icon request")
+
+	var returned model.Icon
+	err := row.StructScan(&returned)
+
+	if err != nil {
+		return returned.ID, err
+	}
+
+	zap.S().Debugw("Returning with the inserted icon request ID")
+	return returned.ID, nil
+}
+
+// SaveIcons upserts the list of icons to the database and updates requester counts on conflict
+func (dbc *DBClient) SaveIcons(dev string, icons []*model.Icon) (int, error) {
+	zap.S().Debugw("Inserting the list of icons into the database")
+
+	for _, icon := range icons {
+		zap.S().Debugw("Executing the query...")
+
+		query := fmt.Sprintf(`
+		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		ON CONFLICT (icon_pack_name, component) DO UPDATE
+		SET (requesters, updated_at) = (icon_requests.requesters + 1, CURRENT_TIMESTAMP)
+	`, dev)
+
+		_, err := dbc.db.Exec(query, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
+
+		if err != nil {
+			zap.S().Debugw("Failed to insert icon")
+			return -1, err
+		}
+
+	}
+
+	zap.S().Debugw("Returning with the number of icons inserted")
+
+	// Needs fix, updated icons also returned as inserted icon count
+	return len(icons), nil
+}
+
+// UpdateIconStatus updates the status of the icon request (pending | complete)
+func (dbc *DBClient) UpdateIconStatus(dev, pack, component, status string) (string, error) {
 	query := fmt.Sprintf(`
 		UPDATE icon_requests.%s_icon_requests
 		SET status = $1

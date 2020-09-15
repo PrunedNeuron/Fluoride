@@ -12,17 +12,17 @@ import (
 type IconStore interface {
 
 	// Gets all icons by the developer
-	GetAllIconsByDev(string) ([]model.Icon, error)
+	GetIconsByDev(string) ([]model.Icon, error)
 
 	// Gets all the icons by the developer
-	GetAllIconsByPackByDev(string, string) ([]model.Icon, error)
+	GetIconsByPackByDev(string, string) ([]model.Icon, error)
 
 	// Gets icons with status = pending
 	GetPendingIconsByPackByDev(string, string) ([]model.Icon, error)
 
 	// Gets icons with status = done
 	GetDoneIconsByPackByDev(string, string) ([]model.Icon, error)
-	
+
 	// Gets icons with component = given string
 	GetIconByComponentByPackByDev(string, string, string) (*model.Icon, error)
 
@@ -42,7 +42,7 @@ type IconStore interface {
 	GetDoneIconCountByDev(string) (int, error)
 
 	// Updates the status of the icon with the given component with the given status
-	UpdateStatus(string, string, string, string) (string, error)
+	UpdateIconStatus(string, string, string, string) (string, error)
 }
 
 // NewIconStore creates and returns a new icon store instance

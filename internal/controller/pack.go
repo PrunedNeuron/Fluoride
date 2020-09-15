@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )
 
@@ -56,5 +57,53 @@ func CreatePack(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, &response{
 		Status:  "success",
 		Message: "Created icon pack named " + packName,
+	})
+}
+
+// GetPacks gets all the icon packs
+func GetPacks(w http.ResponseWriter, r *http.Request) {
+	// !!!UNIMPLEMENTED
+}
+
+// GetPacksByDev renders all the packs by the given dev
+func GetPacksByDev(w http.ResponseWriter, r *http.Request) {
+	// Get dev from url
+	dev := chi.URLParam(r, "developer")
+
+	if dev == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid dev")))
+		return
+	}
+
+	packs, err := packService.GetPacksByDev(dev)
+
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Packs:  packs,
+	})
+}
+
+// GetPackCountByDev responds with the number of icon requests
+func GetPackCountByDev(w http.ResponseWriter, r *http.Request) {
+	// Get dev from url
+	dev := chi.URLParam(r, "developer")
+
+	if dev == "" {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid dev")))
+		return
+	}
+
+	count, err := packService.GetPackCountByDev(dev)
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Count:  count,
 	})
 }

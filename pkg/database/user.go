@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fluoride/internal/model"
-	"fluoride/pkg/errors"
 	"fmt"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
@@ -19,7 +18,7 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 	query := `
 			CREATE TABLE IF NOT EXISTS secure.users (
 				id SERIAL PRIMARY KEY,
-				role TEXT NOT NULL DEFAULT "developer",
+				role TEXT NOT NULL,
 				name TEXT NOT NULL,
 				username TEXT UNIQUE NOT NULL,
 				email TEXT UNIQUE NOT NULL,
@@ -37,25 +36,21 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 	}
 
 	zap.S().Debugw("Inserting the given user into the users table")
-	row, err := dbc.db.Queryx(`
+	row := dbc.db.QueryRowx(`
 		INSERT INTO secure.users (role, name, username, email, url)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING *
 	`, user.Role, user.Name, user.Username, user.Email, user.URL)
 
-	if err == sql.ErrNoRows {
-		zap.S().Errorf("No rows in the database!")
-		return "", "", err
-	} else if err != nil {
-		zap.S().Errorf(errors.ErrDatabase.Error())
-		return "", "", err
-	}
-
 	zap.S().Debugw("Scanning the result")
 
 	var addedUser model.User
 	err = row.StructScan(&addedUser)
-	if err != nil {
+
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return "", "", err
+	} else if err != nil {
 		zap.S().Errorf("Failed to scan return value, error: %s", err.Error())
 		return "", "", err
 	}
@@ -94,9 +89,9 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 				url TEXT NOT NULL,
 				requesters TEXT NOT NULL,
 				status TEXT NOT NULL,
-				icon_pack_id INT REFERENCES icon_packs.%s_icon_packs(id)
-				created_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
-				updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp
+				icon_pack_id INT REFERENCES icon_packs.%s_icon_packs(id),
+				created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 			)
 		`, user.Username, user.Username)
 
