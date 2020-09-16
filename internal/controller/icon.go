@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -221,10 +222,10 @@ func SaveIcon(w http.ResponseWriter, r *http.Request) {
 // SaveIcons saves the list of icons to the database
 func SaveIcons(w http.ResponseWriter, r *http.Request) {
 	// Get dev from url
-	dev := chi.URLParam(r, "developer")
+	dev := strings.ToLower(chi.URLParam(r, "developer"))
 
 	// Get pack from url
-	pack := chi.URLParam(r, "pack")
+	pack := strings.ToLower(chi.URLParam(r, "pack"))
 
 	if dev == "" {
 		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("invalid dev")))
@@ -379,7 +380,7 @@ func UpdateIconStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status, err := iconService.UpdateIconStatus(dev, pack, req.Component, req.Status)
+	status, err := iconService.UpdateIconStatus(strings.ToLower(dev), strings.ToLower(pack), req.Component, strings.ToLower(req.Status))
 
 	render.JSON(w, r, &response{
 		Status:  "success",

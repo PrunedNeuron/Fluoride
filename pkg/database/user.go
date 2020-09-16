@@ -95,7 +95,7 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 		query := fmt.Sprintf(`
 			CREATE TABLE IF NOT EXISTS icon_packs.%s_icon_packs (
 				id SERIAL PRIMARY KEY,
-				name TEXT NOT NULL,
+				name TEXT UNIQUE NOT NULL,
 				developer_username TEXT REFERENCES secure.users(username),
 				url TEXT NOT NULL,
 				billing_status TEXT NOT NULL,
@@ -117,15 +117,16 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 			CREATE TABLE IF NOT EXISTS icon_requests.%s_icon_requests (
 				id SERIAL PRIMARY KEY,
 				name TEXT NOT NULL,
-				component TEXT UNIQUE NOT NULL,
+				component TEXT NOT NULL,
 				url TEXT NOT NULL,
-				requesters TEXT NOT NULL,
-				status TEXT NOT NULL,
-				icon_pack_id INT REFERENCES icon_packs.%s_icon_packs(id),
+				requesters INT NOT NULL DEFAULT 0,
+				status TEXT NOT NULL DEFAULT 'pending',
+				icon_pack_name TEXT REFERENCES icon_packs.%s_icon_packs(name),
 				created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+				updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				CONSTRAINT %s_unique_component_pack_id UNIQUE (component, icon_pack_name)
 			)
-		`, user.Username, user.Username)
+		`, user.Username, user.Username, user.Username)
 
 		_, err = dbc.db.Exec(query)
 		if err != nil {

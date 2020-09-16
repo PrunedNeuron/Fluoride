@@ -66,7 +66,7 @@ func (dbc *DBClient) GetIconsByDev(dev string) ([]model.Icon, error) {
 		err = rows.StructScan(&icon)
 		icons = append(icons, icon)
 		if err != nil {
-			zap.S().Errorf("Failed to scan result")
+			zap.S().Errorf("Failed to scan result, error: %s", err.Error())
 			return nil, err
 		}
 	}
@@ -82,9 +82,9 @@ func (dbc *DBClient) GetIconsByPackByDev(dev, pack string) ([]model.Icon, error)
 		zap.S().Errorf("Developer does not exist, cannot retrieve icon requests")
 		return nil, fmt.Errorf("Developer does not exist, cannot retrieve icon requests")
 	}
-
-	if packExists, _ := dbc.PackExists(dev, pack); !packExists {
-		zap.S().Errorf("Icon pack does not exist, cannot retrieve icon requests")
+	packExists, err := dbc.PackExists(dev, pack)
+	if !packExists {
+		zap.S().Errorf("Icon pack does not exist, cannot retrieve icon requests, error: %s", err)
 		return nil, fmt.Errorf("Icon pack does not exist, cannot retrieve icon requests")
 	}
 
@@ -303,13 +303,13 @@ func (dbc *DBClient) SaveIcons(dev string, icons []*model.Icon) (int, error) {
 		INSERT INTO icon_requests.%s_icon_requests (name, component, url, icon_pack_name, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		ON CONFLICT (icon_pack_name, component) DO UPDATE
-		SET (requesters, updated_at) = (icon_requests.requesters + 1, CURRENT_TIMESTAMP)
-	`, dev)
+		SET (requesters, updated_at) = (icon_requests.%s_icon_requests.requesters + 1, CURRENT_TIMESTAMP)
+	`, dev, dev)
 
 		_, err := dbc.db.Exec(query, icon.Name, icon.Component, icon.URL, icon.Pack, time.Now(), time.Now())
 
 		if err != nil {
-			zap.S().Debugw("Failed to insert icon")
+			zap.S().Errorf("Failed to insert icon, error: %s", err.Error())
 			return -1, err
 		}
 

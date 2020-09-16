@@ -46,6 +46,8 @@ type IconStore interface {
 
 	// Updates the status of the icon with the given component with the given status
 	UpdateIconStatus(string, string, string, string) (string, error)
+
+	GetIconPackIDFromName(string, string) (int, error)
 }
 
 // NewIconStore creates and returns a new icon store instance

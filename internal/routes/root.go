@@ -22,6 +22,9 @@ func Route(router chi.Router) {
 	router.Get("/developers/count", controller.GetDevCount)
 	router.Mount("/developers/{developer}", devRouter())
 
+	// Icon pack routes
+	router.Get("/packs", controller.GetPacks)
+
 	// Icon Request routes
 	router.Get("/icons", controller.GetIcons)
 

@@ -5,6 +5,7 @@ import (
 	"fluoride/internal/model"
 	"fluoride/pkg/errors"
 	"fmt"
+	"strings"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"
@@ -20,9 +21,10 @@ func (dbc *DBClient) PackExists(dev, pack string) (bool, error) {
 
 	query := fmt.Sprintf(`
 		SELECT * FROM icon_packs.%s_icon_packs
-		WHERE icon_pack_name = $1
+		WHERE name = $1
 	`, dev)
 
+	fmt.Printf("pack = %s", pack)
 	_, err := dbc.db.Queryx(query, pack)
 
 	if err == sql.ErrNoRows {
@@ -31,11 +33,11 @@ func (dbc *DBClient) PackExists(dev, pack string) (bool, error) {
 	}
 
 	if err != nil {
-		zap.S().Errorf("Failed to scan returned icon pack")
+		zap.S().Errorf("Failed to scan returned icon pack, error: %s", err.Error())
 		return false, err
 	}
 
-	return false, err
+	return true, nil
 }
 
 // CreatePack creates a new icon pack record
@@ -52,7 +54,7 @@ func (dbc *DBClient) CreatePack(pack model.Pack) (string, error) {
 		`, pack.DevUsername)
 
 	zap.S().Debugw("Inserting icon pack into developer's icon packs table")
-	row := dbc.db.QueryRowx(query, pack.Name, pack.DevUsername, pack.URL, pack.BillingStatus)
+	row := dbc.db.QueryRowx(query, strings.ToLower(pack.Name), pack.DevUsername, pack.URL, pack.BillingStatus)
 
 	zap.S().Debugw("Scanning returned row")
 	var packName string

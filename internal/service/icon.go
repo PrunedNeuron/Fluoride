@@ -83,3 +83,8 @@ func (service *IconService) GetDoneIconCountByDev(dev string) (int, error) {
 func (service *IconService) UpdateIconStatus(dev, pack, component, status string) (string, error) {
 	return service.iconStore.UpdateIconStatus(dev, pack, component, status)
 }
+
+// GetIconPackIDFromName sets the new status of the icon request
+func (service *IconService) GetIconPackIDFromName(dev, pack string) (int, error) {
+	return service.iconStore.GetIconPackIDFromName(dev, pack)
+}
