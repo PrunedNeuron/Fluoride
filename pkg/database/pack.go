@@ -46,7 +46,7 @@ func (dbc *DBClient) CreatePack(pack model.Pack) (string, error) {
 		return "", fmt.Errorf("Developer does not exist, cannot create icon pack for non existent developer")
 	}
 	query := fmt.Sprintf(`
-			INSERT INTO icon_packs.%s_icon_packs (name, dev_username, url, billing_status)
+			INSERT INTO icon_packs.%s_icon_packs (name, developer_username, url, billing_status)
 			VALUES ($1, $2, $3, $4)
 			RETURNING name
 		`, pack.DevUsername)
@@ -127,6 +127,23 @@ func (dbc *DBClient) GetPackCountByDev(dev string) (int, error) {
 
 // GetPacks gets all the icon packs in the database
 func (dbc *DBClient) GetPacks() ([]model.Pack, error) {
-	// unimplemented
-	return nil, nil
+	devs, err := dbc.GetDevs()
+
+	if err != nil {
+		zap.S().Errorf("Failed to retrieve list of developers")
+		return nil, err
+	}
+
+	var packs []model.Pack
+
+	for _, dev := range devs {
+		packsByDev, err := dbc.GetPacksByDev(dev.Username)
+		if err != nil {
+			zap.S().Errorf("Failed to get icon packs by developer")
+			return nil, err
+		}
+		packs = append(packs, packsByDev...)
+	}
+
+	return packs, nil
 }

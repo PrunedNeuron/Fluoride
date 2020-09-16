@@ -58,7 +58,8 @@ func CreatePack(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logger.Errorf("Failed to create icon pack, error: %s", err)
-		render.Render(w, r, errors.ErrInternalServer(fmt.Errorf("Failed to create icon pack")))
+		render.Render(w, r, errors.ErrInternalServer(err))
+		return
 	}
 
 	render.JSON(w, r, &response{
@@ -69,7 +70,24 @@ func CreatePack(w http.ResponseWriter, r *http.Request) {
 
 // GetPacks gets all the icon packs
 func GetPacks(w http.ResponseWriter, r *http.Request) {
-	// !!!UNIMPLEMENTED
+	packs, err := packService.GetPacks()
+
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+
+	if len(packs) >= 1 {
+		render.JSON(w, r, &response{
+			Status: "success",
+			Packs:  packs,
+		})
+	} else {
+		render.JSON(w, r, &response{
+			Status:  "success",
+			Message: "No icon packs found",
+		})
+	}
 }
 
 // GetPacksByDev renders all the packs by the given dev
@@ -88,10 +106,17 @@ func GetPacksByDev(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, errors.ErrInvalidRequest(err))
 		return
 	}
-	render.JSON(w, r, &response{
-		Status: "success",
-		Packs:  packs,
-	})
+	if len(packs) >= 1 {
+		render.JSON(w, r, &response{
+			Status: "success",
+			Packs:  packs,
+		})
+	} else {
+		render.JSON(w, r, &response{
+			Status:  "success",
+			Message: "No icon packs found for developer " + dev,
+		})
+	}
 }
 
 // GetPackCountByDev responds with the number of icon requests
