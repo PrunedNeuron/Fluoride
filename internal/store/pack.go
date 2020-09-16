@@ -11,6 +11,9 @@ import (
 // PackStore is the repository for the Icon Pack model (pack).
 type PackStore interface {
 
+	// Check whether givne pack exists
+	PackExists(string, string) (bool, error)
+
 	// Create new icon pack
 	CreatePack(model.Pack) (string, error)
 

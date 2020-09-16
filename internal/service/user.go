@@ -24,6 +24,11 @@ func NewUserService(userStore store.UserStore) *UserService {
 
 }
 
+// GetUsers gets the list of all users in the database
+func (service *UserService) GetUsers() ([]model.User, error) {
+	return service.userStore.GetUsers()
+}
+
 // CreateUser creates a new user
 func (service *UserService) CreateUser(user *model.User) (string, string, error) {
 	return service.userStore.CreateUser(user)

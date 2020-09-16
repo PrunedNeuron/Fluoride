@@ -17,11 +17,21 @@ func Route(router chi.Router) {
 	// Get current version
 	router.Get("/version", controller.GetVersion)
 
-	// Get all developers
+	// Developer routes
 	router.Get("/developers", controller.GetDevs)
+	router.Get("/developers/count", controller.GetDevCount)
+	router.Mount("/developers/{developer}", devRouter())
 
-	// Icon pack specific router
-	router.Mount("/{developer}", devRouter())
+	// Icon Request routes
+	router.Get("/icons", controller.GetIcons)
+
+	// Plan routes
+	router.Get("/plans", controller.GetPlans)
+	router.Post("/plans", controller.CreatePlan)
+
+	// User routes
+	router.Get("/users", controller.GetUsers)
+	router.Post("/users", controller.CreateUser)
 
 	// Fallback if no pattern matches
 	router.NotFound(controller.NotFound)

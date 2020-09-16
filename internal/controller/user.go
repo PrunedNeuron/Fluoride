@@ -9,6 +9,20 @@ import (
 	"github.com/go-chi/render"
 )
 
+// GetUsers renders all the users in the database
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := userService.GetUsers()
+
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status: "success",
+		Users:  users,
+	})
+}
+
 // CreateUser creates a new user
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 

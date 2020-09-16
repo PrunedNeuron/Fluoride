@@ -3,11 +3,38 @@ package database
 import (
 	"database/sql"
 	"fluoride/internal/model"
+	"fluoride/pkg/errors"
 	"fmt"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"
 )
+
+// GetUsers gets the list of all users in the DB
+func (dbc *DBClient) GetUsers() ([]model.User, error) {
+	users := []model.User{}
+	zap.S().Debugw("Querying the database for all users")
+	rows, err := dbc.db.Queryx(`
+		SELECT * FROM secure.users
+		ORDER BY id DESC
+	`)
+	zap.S().Debugw("Scanning the result")
+	for rows.Next() {
+		var user model.User
+		err = rows.StructScan(&user)
+		users = append(users, user)
+	}
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return nil, err
+	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
+		return nil, err
+	}
+
+	zap.S().Debugw("Returning with the list of all users")
+	return users, nil
+}
 
 // CreateUser inserts a new user
 func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {

@@ -11,6 +11,9 @@ import (
 // PlanStore is the repository for the plan model
 type PlanStore interface {
 
+	// Check whether the plans table exists
+	PlansExists() (bool, error)
+	
 	// Create new plan
 	CreatePlan(*model.Plan) (string, error)
 

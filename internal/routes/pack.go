@@ -4,10 +4,13 @@ import (
 	"github.com/go-chi/chi"
 )
 
+/*
+	/developers/{developer}/packs/{pack}
+*/
 func packRouter() chi.Router {
 	router := chi.NewRouter()
 
-	// Icons
+	// Icon requests
 	router.Mount("/icons", iconRouter())
 
 	return router

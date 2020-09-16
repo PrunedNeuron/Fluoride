@@ -13,8 +13,8 @@ import (
 // CreatePack creates a new icon pack
 func CreatePack(w http.ResponseWriter, r *http.Request) {
 
+	dev := chi.URLParam(r, "developer")
 	var pack model.Pack
-
 	err := render.DecodeJSON(r.Body, &pack)
 
 	if err != nil {
@@ -32,6 +32,13 @@ func CreatePack(w http.ResponseWriter, r *http.Request) {
 	if pack.DevUsername == "" {
 		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("Missing developer username value")))
 		logger.Errorw("Error: ", errors.ErrInvalidRequest(fmt.Errorf("Missing developer username value")))
+		return
+	}
+
+	// URL Dev != request body dev
+	if pack.DevUsername != dev {
+		render.Render(w, r, errors.ErrInvalidRequest(fmt.Errorf("Developer username mismatch")))
+		logger.Errorw("Error: ", errors.ErrInvalidRequest(fmt.Errorf("Developer username mismatch")))
 		return
 	}
 

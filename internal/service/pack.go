@@ -24,6 +24,11 @@ func NewPackService(packStore store.PackStore) *PackService {
 
 }
 
+// PackExists checks whether the given pack exists
+func (service *PackService) PackExists(dev, pack string) (bool, error) {
+	return service.packStore.PackExists(dev, pack)
+}
+
 // CreatePack creates a new icon pack
 func (service *PackService) CreatePack(pack model.Pack) (string, error) {
 	return service.packStore.CreatePack(pack)
@@ -37,4 +42,10 @@ func (service *PackService) GetPacksByDev(dev string) ([]model.Pack, error) {
 // GetPackCountByDev gets the number of icon packs by the dev
 func (service *PackService) GetPackCountByDev(dev string) (int, error) {
 	return service.packStore.GetPackCountByDev(dev)
+}
+
+// GetPacks returns the list of all packs
+// !!! UNIMPLEMENTED
+func (service *PackService) GetPacks() ([]model.Pack, error) {
+	return service.packStore.GetPacks()
 }

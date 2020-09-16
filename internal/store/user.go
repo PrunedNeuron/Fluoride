@@ -11,6 +11,8 @@ import (
 // UserStore is the repository for the generic user model.
 type UserStore interface {
 
+	// Gets the list of all users
+	GetUsers() ([]model.User, error)
 	// Creates a new user
 	CreateUser(*model.User) (string, string, error)
 }

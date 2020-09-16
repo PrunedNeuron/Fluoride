@@ -24,6 +24,11 @@ func NewPlanService(planStore store.PlanStore) *PlanService {
 
 }
 
+// PlansExists returns whether the plans table exists
+func (service *PlanService) PlansExists() (bool, error) {
+	return service.planStore.PlansExists()
+}
+
 // CreatePlan creates a new user
 func (service *PlanService) CreatePlan(plan *model.Plan) (string, error) {
 	return service.planStore.CreatePlan(plan)

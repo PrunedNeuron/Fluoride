@@ -11,6 +11,9 @@ import (
 // IconStore is the repository for the Icon model.
 type IconStore interface {
 
+	// Gets all the icons in the database
+	GetIcons() ([]model.Icon, error)
+
 	// Gets all icons by the developer
 	GetIconsByDev(string) ([]model.Icon, error)
 

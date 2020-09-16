@@ -17,12 +17,6 @@ type DevStore interface {
 	// Get all the developers in the database
 	GetDevs() ([]model.User, error)
 
-	// Get packs by the developer
-	GetPacksByDev(string) ([]model.Pack, error)
-
-	// Get icon requests belonging to the developer
-	GetIconsByDev(string) ([]model.Icon, error)
-
 	// Get the number of developers in the database
 	GetDevCount() (int, error)
 

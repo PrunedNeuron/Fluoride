@@ -24,6 +24,11 @@ func NewIconService(iconStore store.IconStore) *IconService {
 
 }
 
+// GetIcons retrieves a list of all the icon requests in the DB
+func (service *IconService) GetIcons() ([]model.Icon, error) {
+	return service.iconStore.GetIcons()
+}
+
 // GetIconsByDev retrieves a list of all the icon requests belonging to the dev
 func (service *IconService) GetIconsByDev(dev string) ([]model.Icon, error) {
 	return service.iconStore.GetIconsByDev(dev)

@@ -11,7 +11,22 @@ import (
 	"github.com/go-chi/render"
 )
 
-// GetIconsByDev responds with a list of all the icons
+// GetIcons responds with a list of all the icons in the db
+func GetIcons(w http.ResponseWriter, r *http.Request) {
+
+	list, err := iconService.GetIcons()
+	if err != nil {
+		render.Render(w, r, errors.ErrInvalidRequest(err))
+		return
+	}
+	render.JSON(w, r, &response{
+		Status:  "success",
+		Message: "retrieved " + strconv.Itoa(len(list)) + " icons",
+		Icons:   list,
+	})
+}
+
+// GetIconsByDev responds with a list of all the icons by the dev
 func GetIconsByDev(w http.ResponseWriter, r *http.Request) {
 
 	// Get dev from url
@@ -133,7 +148,8 @@ func GetIconByComponentByPackByDev(w http.ResponseWriter, r *http.Request) {
 	// Get pack from url
 	pack := chi.URLParam(r, "pack")
 
-	// Get component from url
+	// Get component from url encoded form query
+	// component := r.URL.Query().Get("component")
 	component := chi.URLParam(r, "component")
 
 	if dev == "" {

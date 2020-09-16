@@ -24,6 +24,11 @@ func NewDevService(devStore store.DevStore) *DevService {
 
 }
 
+// DevExists returns whether the given dev exists
+func (service *DevService) DevExists(dev string) (bool, error) {
+	return service.devStore.DevExists(dev)
+}
+
 // GetDevs gets all the users that are developers
 func (service *DevService) GetDevs() ([]model.User, error) {
 	return service.devStore.GetDevs()

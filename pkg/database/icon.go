@@ -11,6 +11,48 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetIcons gets all the icons in the DB
+// !!!UNIMPLEMENTED
+func (dbc *DBClient) GetIcons() ([]model.Icon, error) {
+	// !!!UNIMPLEMENTED
+	return nil, nil
+}
+
+// GetIconsByDev gets all the icon packs by the dev
+func (dbc *DBClient) GetIconsByDev(dev string) ([]model.Icon, error) {
+	icons := []model.Icon{}
+	zap.S().Debugw("Querying the database for all icon requests by given developer")
+
+	query := fmt.Sprintf(`
+		SELECT * FROM icon_requests.%s_icon_requests
+		ORDER BY id DESC
+	`, dev)
+
+	rows, err := dbc.db.Queryx(query)
+
+	if err == sql.ErrNoRows {
+		zap.S().Errorf("No rows in the database!")
+		return nil, err
+	} else if err != nil {
+		zap.S().Errorf(errors.ErrDatabase.Error())
+		return nil, err
+	}
+
+	zap.S().Debugw("Scanning the result")
+	for rows.Next() {
+		var icon model.Icon
+		err = rows.StructScan(&icon)
+		icons = append(icons, icon)
+		if err != nil {
+			zap.S().Errorf("Failed to scan result")
+			return nil, err
+		}
+	}
+
+	zap.S().Debugw("Returning with the list of all icon requests belonging to the developer")
+	return icons, nil
+}
+
 // GetIconsByPackByDev gets all the icons by the developer
 func (dbc *DBClient) GetIconsByPackByDev(dev, pack string) ([]model.Icon, error) {
 
@@ -140,41 +182,6 @@ func (dbc *DBClient) GetIconByComponentByPackByDev(dev, pack, component string) 
 
 	zap.S().Debugw("Returning with the selected icon request")
 	return &icon, nil
-}
-
-// GetIconsByDev gets all the icon packs by the dev
-func (dbc *DBClient) GetIconsByDev(dev string) ([]model.Icon, error) {
-	icons := []model.Icon{}
-	zap.S().Debugw("Querying the database for all icon requests by given developer")
-
-	query := fmt.Sprintf(`
-		SELECT * FROM icon_requests.%s_icon_requests
-		ORDER BY id DESC
-	`, dev)
-
-	rows, err := dbc.db.Queryx(query)
-
-	if err == sql.ErrNoRows {
-		zap.S().Errorf("No rows in the database!")
-		return nil, err
-	} else if err != nil {
-		zap.S().Errorf(errors.ErrDatabase.Error())
-		return nil, err
-	}
-
-	zap.S().Debugw("Scanning the result")
-	for rows.Next() {
-		var icon model.Icon
-		err = rows.StructScan(&icon)
-		icons = append(icons, icon)
-		if err != nil {
-			zap.S().Errorf("Failed to scan result")
-			return nil, err
-		}
-	}
-
-	zap.S().Debugw("Returning with the list of all icon requests belonging to the developer")
-	return icons, nil
 }
 
 // GetIconCountByDev returns the number of icon requests owned by the dev
