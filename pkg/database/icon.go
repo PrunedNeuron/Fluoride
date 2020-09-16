@@ -12,10 +12,32 @@ import (
 )
 
 // GetIcons gets all the icons in the DB
-// !!!UNIMPLEMENTED
 func (dbc *DBClient) GetIcons() ([]model.Icon, error) {
-	// !!!UNIMPLEMENTED
-	return nil, nil
+
+	zap.S().Infow("Retrieving the list of all developers")
+	devs, err := dbc.GetDevs()
+
+	if err != nil {
+		zap.S().Errorf("Failed to retrieve list of developers")
+		return nil, err
+	}
+
+	var icons []model.Icon
+
+	zap.S().Infow("Iterating over the list of all developers")
+	for _, dev := range devs {
+		zap.S().Infow("Retrieving the list of icon requests belonging to the current developer")
+		iconsByDev, err := dbc.GetIconsByDev(dev.Username)
+		if err != nil {
+			zap.S().Errorf("Failed to get icon requests belonging to the developer")
+			return nil, err
+		}
+		zap.S().Infow("Appending the list icon requests to the icon request slice")
+		icons = append(icons, iconsByDev...)
+	}
+
+	zap.S().Infow("Returning with the list of all icons in the database")
+	return icons, nil
 }
 
 // GetIconsByDev gets all the icon packs by the dev

@@ -46,7 +46,7 @@ func init() {
 	viper.SetDefault("storage.password", "")
 	viper.SetDefault("storage.host", "localhost")
 	viper.SetDefault("storage.port", 5432)
-	viper.SetDefault("storage.database", "amphetamine")
+	viper.SetDefault("storage.database", "fluoride_dev")
 	viper.SetDefault("storage.sslmode", "disable")
 	viper.SetDefault("storage.retries", 5)
 	viper.SetDefault("storage.sleep_between_retries", "5s")

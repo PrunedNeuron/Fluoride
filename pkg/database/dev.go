@@ -21,7 +21,7 @@ func (dbc *DBClient) DevExists(dev string) (bool, error) {
 	`, dev)
 
 	var user model.User
-	err := row.StructScan(user)
+	err := row.StructScan(&user)
 
 	if user == (model.User{}) {
 		zap.S().Errorf("Developer does not exist in the users relation")
@@ -34,14 +34,18 @@ func (dbc *DBClient) DevExists(dev string) (bool, error) {
 	}
 
 	zap.S().Debugw("Querying database to check whether dev tables exist")
-	_, err = dbc.db.Queryx("SELECT '$1'::regclass", fmt.Sprintf("%s_icon_packs", dev))
+	query := `
+		SELECT $1::regclass
+	`
+	_, err = dbc.db.Queryx(query, fmt.Sprintf("icon_packs.%s_icon_packs", dev))
 
 	if err != nil {
+		zap.S().Debugw("ERROR = " + err.Error())
 		zap.S().Debugw("Developer icon packs table does not exist")
 		return false, err
 	}
 
-	_, err = dbc.db.Queryx("SELECT '$1'::regclass", fmt.Sprintf("%s_icon_requests", dev))
+	_, err = dbc.db.Queryx(query, fmt.Sprintf("icon_requests.%s_icon_requests", dev))
 
 	if err != nil {
 		zap.S().Debugw("Developer icon requests table does not exist")

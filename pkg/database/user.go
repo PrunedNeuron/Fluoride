@@ -40,9 +40,13 @@ func (dbc *DBClient) GetUsers() ([]model.User, error) {
 func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 
 	// Create users table if it does not exist yet
-	zap.S().Debugw("Creating users table if it does not yet exist")
 
-	query := `
+	zap.S().Debugw("Querying database to check whether users table exists")
+	_, err := dbc.db.Queryx("SELECT 'secure.users'::regclass")
+
+	if err != nil {
+		zap.S().Debugw("Users table does not exist, creating")
+		query := `
 			CREATE TABLE IF NOT EXISTS secure.users (
 				id SERIAL PRIMARY KEY,
 				role TEXT NOT NULL,
@@ -55,11 +59,12 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 			)
 		`
 
-	_, err := dbc.db.Exec(query)
+		_, err := dbc.db.Exec(query)
 
-	if err != nil {
-		zap.S().Errorf("Failed to create users table, error: %s", err)
-		return "", "", err
+		if err != nil {
+			zap.S().Errorf("Failed to create users table, error: %s", err)
+			return "", "", err
+		}
 	}
 
 	zap.S().Debugw("Inserting the given user into the users table")
@@ -132,5 +137,5 @@ func (dbc *DBClient) CreateUser(user *model.User) (string, string, error) {
 	}
 
 	zap.S().Debugw("Returning with the username and role of the added user")
-	return addedUser.Name, addedUser.Role, nil
+	return addedUser.Username, addedUser.Role, nil
 }
