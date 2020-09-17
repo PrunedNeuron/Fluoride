@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"fluoride/config"
-	"fluoride/internal/model"
-	"fluoride/internal/service"
-	"fluoride/internal/store"
 	"net/http"
 
+	"github.com/PrunedNeuron/Fluoride/config"
+	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/internal/service"
+	"github.com/PrunedNeuron/Fluoride/internal/store"
 	"github.com/go-chi/render"
 	"go.uber.org/zap"
 )

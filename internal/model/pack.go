@@ -2,9 +2,10 @@ package model
 
 import (
 	"encoding/json"
-	"fluoride/pkg/errors"
 	"fmt"
 	"time"
+
+	"github.com/PrunedNeuron/Fluoride/pkg/errors"
 
 	"go.uber.org/zap"
 )

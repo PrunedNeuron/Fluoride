@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fluoride/config"
-	"fluoride/pkg/server"
-
+	"github.com/PrunedNeuron/Fluoride/config"
+	"github.com/PrunedNeuron/Fluoride/pkg/server"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )

@@ -1,8 +1,9 @@
 package database
 
 import (
-	"fluoride/config"
 	"fmt"
+
+	"github.com/PrunedNeuron/Fluoride/config"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"github.com/jmoiron/sqlx"

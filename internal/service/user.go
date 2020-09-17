@@ -1,8 +1,8 @@
 package service
 
 import (
-	"fluoride/internal/model"
-	"fluoride/internal/store"
+	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/internal/store"
 
 	"go.uber.org/zap"
 )

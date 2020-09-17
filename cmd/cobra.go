@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"fluoride/config"
 	"fmt"
 	"net"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/PrunedNeuron/Fluoride/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -21,6 +21,10 @@ var (
 	rootCmd       = &cobra.Command{
 		Version: config.Version,
 		Use:     config.Executable,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Hello world.")
+
+		},
 	}
 )
 
@@ -100,5 +104,6 @@ func init() {
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		os.Exit(1)
 	}
 }

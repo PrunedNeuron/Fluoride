@@ -2,10 +2,11 @@ package database
 
 import (
 	"database/sql"
-	"fluoride/internal/model"
-	"fluoride/pkg/errors"
 	"fmt"
 	"strings"
+
+	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/pkg/errors"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"

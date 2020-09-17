@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"fluoride/internal/model"
-	"fluoride/pkg/errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/pkg/errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )

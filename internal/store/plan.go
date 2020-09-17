@@ -1,8 +1,8 @@
 package store
 
 import (
-	"fluoride/internal/model"
-	"fluoride/pkg/database"
+	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/pkg/database"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -13,7 +13,7 @@ type PlanStore interface {
 
 	// Check whether the plans table exists
 	PlansExists() (bool, error)
-	
+
 	// Create new plan
 	CreatePlan(*model.Plan) (string, error)
 

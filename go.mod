@@ -1,4 +1,4 @@
-module fluoride
+module github.com/PrunedNeuron/Fluoride
 
 go 1.15
 

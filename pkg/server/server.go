@@ -1,12 +1,13 @@
 package server
 
 import (
-	"fluoride/internal/routes"
-	"fluoride/pkg/logger"
 	"fmt"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/PrunedNeuron/Fluoride/internal/routes"
+	"github.com/PrunedNeuron/Fluoride/pkg/logger"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
