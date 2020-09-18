@@ -14,6 +14,7 @@ var serverCmd = &cobra.Command{
 	Aliases: []string{"server", "api"},
 	Run: func(cmd *cobra.Command, args []string) {
 		// Create server
+		logger.Info("Creating server")
 		server, err := server.New()
 		if err != nil {
 			logger.Errorf("Failed to start server, error: ", err.Error())
