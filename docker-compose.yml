@@ -1,0 +1,43 @@
+version: "3.6"
+services:
+    db:
+        container_name: postgres
+        build:
+            context: .
+            dockerfile: postgres.Dockerfile
+        restart: on-failure
+        environment:
+            POSTGRES_DB: fluoride_dev
+            POSTGRES_USER: ayush
+            POSTGRES_PASSWORD: ayush
+        volumes:
+            - database-data:/var/lib/postgresql/data/
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        ports:
+            - 5432:5432
+        networks:
+            - backend
+
+    server:
+        # image: golang:latest
+        build:
+            context: .
+            dockerfile: server.Dockerfile
+        restart: on-failure
+        environment:
+            STORAGE_HOST: postgres
+        working_dir: /go/src/github.com/PrunedNeuron/Fluoride
+        ports:
+            - 3000:3000
+        depends_on:
+            - db
+        networks:
+            - backend
+
+volumes:
+    database-data:
+        driver: local
+
+networks:
+    backend:
+        driver: bridge
