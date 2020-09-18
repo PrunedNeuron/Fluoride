@@ -4,10 +4,8 @@ import (
 	"fmt"
 
 	"github.com/PrunedNeuron/Fluoride/config"
-
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"github.com/jmoiron/sqlx"
-	"github.com/rs/xid"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -17,12 +15,11 @@ type DBClient struct {
 	logger *zap.SugaredLogger
 	dbName string
 	db     *sqlx.DB
-	newID  func() string
 }
 
 // New returns a new database client
 func New() (*DBClient, error) {
-	logger := zap.S().With("package", "database.postgres")
+	logger := zap.S().With("package", "storage.postgres")
 
 	var (
 		err           error
@@ -56,12 +53,13 @@ func New() (*DBClient, error) {
 	}
 
 	// SSL mode
-	if sslMode := viper.GetString("storage.sslmode"); sslMode != "" {
+	if sslMode := viper.GetString("storage.ssl"); sslMode != "" {
 		dbURLOptions += fmt.Sprintf("?sslmode=%s", sslMode)
 	}
 
 	// Concatenate and form the full database url
 	dbURL := "postgres://" + dbCredentials + dbAddress + "/" + dbName + dbURLOptions
+	logger.Debugw("Connected to postgres database at %s", dbURL)
 
 	// If the stop flag is caught while sleeping
 	if config.Stop.Bool() {
@@ -69,14 +67,9 @@ func New() (*DBClient, error) {
 	}
 
 	// Connect to the database and verify with a ping
-	db, err := sqlx.Open("pgx", dbURL)
+	db, err := sqlx.Connect("pgx", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("Could not connect to database: %s", err)
-	}
-
-	// Ping database
-	if err = db.Ping(); err != nil {
-		return nil, fmt.Errorf("Could not ping the database %s", err)
 	}
 
 	db.SetMaxOpenConns(viper.GetInt("storage.max_connections"))
@@ -92,9 +85,6 @@ func New() (*DBClient, error) {
 		logger: logger,
 		dbName: dbName,
 		db:     db,
-		newID: func() string {
-			return xid.New().String()
-		},
 	}, nil
 
 }

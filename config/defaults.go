@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// ConfigureDefaults configures the defaults
+// configures the defaults
 func init() {
 
 	// Application info
@@ -28,7 +28,7 @@ func init() {
 	// Server Configuration
 	viper.SetDefault("server.network", "tcp")
 	viper.SetDefault("server.host", "0.0.0.0")
-	viper.SetDefault("server.port", "3000")
+	viper.SetDefault("server.port", 3000)
 	viper.SetDefault("server.log_requests", true)
 	viper.SetDefault("server.log_requests_body", false)
 	viper.SetDefault("server.log_disabled_http", []string{"/version"})
@@ -44,10 +44,10 @@ func init() {
 	viper.SetDefault("storage.type", "postgres")
 	viper.SetDefault("storage.username", "ayush")
 	viper.SetDefault("storage.password", "ayush")
-	viper.SetDefault("storage.host", "postgres")
+	viper.SetDefault("storage.host", "localhost")
 	viper.SetDefault("storage.port", 5432)
 	viper.SetDefault("storage.database", "fluoride_dev")
-	viper.SetDefault("storage.sslmode", "disable")
+	viper.SetDefault("storage.ssl", "disable")
 	viper.SetDefault("storage.retries", 5)
 	viper.SetDefault("storage.sleep_between_retries", "5s")
 	viper.SetDefault("storage.max_connections", 80)

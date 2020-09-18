@@ -14,11 +14,12 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+var configuration config.Configuration
+
 var (
-	configuration string
-	logger        *zap.SugaredLogger
-	pidFile       string
-	rootCmd       = &cobra.Command{
+	customConfiguration string
+	logger              *zap.SugaredLogger
+	rootCmd             = &cobra.Command{
 		Version: config.Version,
 		Use:     config.Executable,
 	}
@@ -29,12 +30,29 @@ func initConfiguration() {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	if configuration != "" {
-		viper.SetConfigFile(configuration)
-		err := viper.ReadInConfig()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to read configuration file!: %s ERROR: %s\n", configuration, err.Error())
-			os.Exit(1)
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.SetConfigType("yml")
+
+	if err := viper.ReadInConfig(); err != nil {
+		logger.Errorf("Failed to read configuration file!: %s ERROR: %s\n", customConfiguration, err.Error())
+	}
+
+	var configuration config.Configuration
+	err := viper.Unmarshal(&configuration)
+	config.SetConfig(&configuration)
+
+	if err != nil {
+		logger.Errorf("Failed to unmarshal configuration file into struct, %s", err.Error())
+	}
+
+	println("HOST = %s", config.GetConfig().Database.Host)
+
+	if customConfiguration != "" {
+		viper.SetConfigFile(customConfiguration)
+		if err := viper.ReadInConfig(); err != nil {
+			logger.Errorf("Failed to read custom configuration file!: %s ERROR: %s\n", customConfiguration, err.Error())
+
 		}
 	}
 }
@@ -46,7 +64,7 @@ func initLogger() {
 	// Log Level
 	var logLevel zapcore.Level
 	if err := logLevel.Set(viper.GetString("logger.level")); err != nil {
-		zap.S().Fatalw("Could not determine logger.level", "error", err)
+		logger.Errorw("Could not determine logger.level", "error", err)
 	}
 	loggerConfiguration.Level.SetLevel(logLevel)
 
@@ -63,7 +81,7 @@ func initLogger() {
 
 	// Use sane timestamp when logging to console
 	if loggerConfiguration.Encoding == "console" {
-		loggerConfiguration.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+		loggerConfiguration.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
 	}
 
 	// JSON Fields
@@ -93,13 +111,14 @@ func initProfiler() {
 
 func init() {
 	cobra.OnInitialize(initConfiguration, initLogger, initProfiler)
-	rootCmd.PersistentFlags().StringVarP(&configuration, "config", "c", "", "Configuration file")
+	rootCmd.PersistentFlags().StringVarP(&customConfiguration, "config", "c", "", "Configuration file (config.yml by default)")
+	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 }
 
 // Execute starts the program
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		zap.S().Errorf("%s", err.Error())
+		logger.Errorf("%s", err.Error())
 		fmt.Fprintf(os.Stderr, "%s", err.Error())
 		os.Exit(1)
 	}

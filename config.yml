@@ -1,0 +1,44 @@
+application:
+    version: 1.0.0
+
+logger:
+    level: debug
+    encoding: console
+    color: true
+    dev_mode: false
+    disable_caller: false
+    disable_stacktrace: false
+
+profiler:
+    enabled: false
+    host: localhost
+    port: 3001
+
+server:
+    network: tcp
+    host: 0.0.0.0
+    port: 3005
+    log_requests: true
+    log_requests_body: false
+    log_disabled_http: ["/version"]
+    profiler_enabled: false
+    profiler_path: "/debug"
+    cors:
+        allowed_origins: ["*"]
+        allowed_methods:
+            ["HEAD", "OPTIONS", "GET", "POST", "PUT", "DELETE", "PATCH"]
+        allowed_headers: ["*"]
+        allowed_credentials: false
+        max_age: 300
+
+database:
+    type: postgres
+    username: ayush
+    password: ayush
+    host: postgres
+    port: 5432
+    database: fluoride_dev
+    ssl: disable
+    retries: 5
+    sleep_between_retries: 5s
+    max_connections: 80

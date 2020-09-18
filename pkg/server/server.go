@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/PrunedNeuron/Fluoride/config"
 	"github.com/PrunedNeuron/Fluoride/internal/routes"
 	"github.com/PrunedNeuron/Fluoride/pkg/logger"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -80,7 +80,7 @@ func (server *Server) Serve() error {
 
 	// Create the http server and assign host, port from config
 	server.httpServer = &http.Server{
-		Addr:    net.JoinHostPort(viper.GetString("server.host"), viper.GetString("server.port")),
+		Addr:    net.JoinHostPort(config.GetConfig().Server.Host, config.GetConfig().Server.Port),
 		Handler: server.router,
 	}
 
