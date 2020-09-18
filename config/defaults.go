@@ -27,7 +27,7 @@ func init() {
 
 	// Server Configuration
 	viper.SetDefault("server.network", "tcp")
-	viper.SetDefault("server.host", "localhost")
+	viper.SetDefault("server.host", "0.0.0.0")
 	viper.SetDefault("server.port", "3000")
 	viper.SetDefault("server.log_requests", true)
 	viper.SetDefault("server.log_requests_body", false)
@@ -43,8 +43,8 @@ func init() {
 	// Database Settings
 	viper.SetDefault("storage.type", "postgres")
 	viper.SetDefault("storage.username", "ayush")
-	viper.SetDefault("storage.password", "")
-	viper.SetDefault("storage.host", "localhost")
+	viper.SetDefault("storage.password", "ayush")
+	viper.SetDefault("storage.host", "postgres")
 	viper.SetDefault("storage.port", 5432)
 	viper.SetDefault("storage.database", "fluoride_dev")
 	viper.SetDefault("storage.sslmode", "disable")
