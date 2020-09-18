@@ -21,10 +21,6 @@ var (
 	rootCmd       = &cobra.Command{
 		Version: config.Version,
 		Use:     config.Executable,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Hello world.")
-
-		},
 	}
 )
 
@@ -103,7 +99,8 @@ func init() {
 // Execute starts the program
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
+		zap.S().Errorf("%s", err.Error())
+		fmt.Fprintf(os.Stderr, "%s", err.Error())
 		os.Exit(1)
 	}
 }
