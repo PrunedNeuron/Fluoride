@@ -18,12 +18,14 @@ COMMIT_SHA=$(shell git rev-parse --short HEAD)
 TARGETOS=linux
 TARGETARCH=amd64
 
+default: build
 
 .PHONY: build
 ## build: build the application
 build: clean
-	@echo "Building..."
-	@CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags netgo -ldflags "-s -w" -a -installsuffix cgo -o bin/${APP}
+	@echo "Building binary"
+	@CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags netgo -ldflags "-s -w" -o bin/${APP}
+	@echo "Binary built (size `stat -c '%s' "bin/${APP}" | numfmt --to=si --suffix=B`)"
 
 .PHONY: run
 ## run: runs go run main.go
@@ -36,6 +38,8 @@ run: build
 clean:
 	@echo "Cleaning"
 	@go clean
+	@echo "Tidying go mod"
+	@go mod tidy
 
 .PHONY: test
 ## test: runs go test with default values
