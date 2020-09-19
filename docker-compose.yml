@@ -4,12 +4,13 @@ services:
         container_name: postgres
         build:
             context: .
-            dockerfile: postgres.Dockerfile
+            dockerfile: docker/db/Dockerfile
         restart: on-failure
         environment:
             POSTGRES_DB: fluoride_dev
             POSTGRES_USER: ayush
             POSTGRES_PASSWORD: ayush
+
         volumes:
             - database-data:/var/lib/postgresql/data/
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -19,13 +20,23 @@ services:
             - backend
 
     server:
-        # image: golang:latest
+        container_name: server
         build:
             context: .
-            dockerfile: server.Dockerfile
+            dockerfile: docker/server/Dockerfile
         restart: on-failure
         environment:
             DATABASE_HOST: postgres
+            DATABASE_DATABASE: fluoride_dev
+            DATABASE_USERNAME: ayush
+            DATABASE_PASSWORD: ayush
+            DATABASE_SSL: disable
+
+            PROFILER_HOST: 0.0.0.0
+            PROFILER_PORT: 3002
+
+            SERVER_HOST: 0.0.0.0
+            SERVER_PORT: 3000
         working_dir: /go/src/github.com/PrunedNeuron/Fluoride
         ports:
             - 3000:3000
