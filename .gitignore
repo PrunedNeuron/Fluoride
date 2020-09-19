@@ -95,3 +95,8 @@ _testmain.go
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Ignore `bin` dir
+bin/
+# or
+*/bin/*
