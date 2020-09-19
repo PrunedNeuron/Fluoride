@@ -1,34 +1,30 @@
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
 FROM golang:alpine AS builder
 
-# Add all the source code (except what's ignored
-# under `.dockerignore`) to the build context.
+RUN apk update && apk upgrade && \
+	apk add bash git make coreutils
 
 WORKDIR /go/src/github.com/PrunedNeuron/Fluoride/
 
-# Set args 
-# RUN set -ex
-
-COPY go.mod .
-COPY go.sum .
-
-# Download dependencies
-RUN go mod download
 # COPY the source code
 COPY . .
 
-ARG TARGETOS
-ARG TARGETARCH
+# Download and verify go dependencies
+RUN go mod download
+RUN go mod verify
 
 # Build binary
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags netgo -ldflags '-extldflags "-static"'
+RUN make
 
-FROM alpine:latest
-RUN apk add --update ca-certificates
-
+# Build minimal image
+FROM scratch
 WORKDIR /go/src/github.com/PrunedNeuron/Fluoride/
 
 # Retrieve the binary from the previous stage
-COPY --from=builder /go/src/github.com/PrunedNeuron/Fluoride/ .
+COPY --from=builder /go/src/github.com/PrunedNeuron/Fluoride/bin ./bin
+COPY --from=builder /go/src/github.com/PrunedNeuron/Fluoride/config.yml .
 
 # Set the binary as the entrypoint of the container
-ENTRYPOINT [ "./Fluoride", "serve" ]
+ENTRYPOINT [ "./bin/fluoride", "serve" ]
