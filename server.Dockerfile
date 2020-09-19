@@ -2,15 +2,11 @@ FROM golang:alpine AS builder
 
 # Add all the source code (except what's ignored
 # under `.dockerignore`) to the build context.
-ADD ./ /go/src/github.com/PrunedNeuron/Fluoride/
+COPY ./ /go/src/github.com/PrunedNeuron/Fluoride/
 
 RUN set -ex && \
 	cd /go/src/github.com/PrunedNeuron/Fluoride && \       
-	CGO_ENABLED=0 go build \
-	-tags netgo \
-	# -v -a \
-	-v \
-	-ldflags '-extldflags "-static"' && \
+	CGO_ENABLED=0 go build -tags netgo -v -ldflags '-extldflags "-static"' && \
 	mv ./Fluoride /usr/bin/Fluoride
 
 FROM alpine:latest

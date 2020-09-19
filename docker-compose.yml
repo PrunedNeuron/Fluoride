@@ -25,7 +25,7 @@ services:
             dockerfile: server.Dockerfile
         restart: on-failure
         environment:
-            STORAGE_HOST: postgres
+            DATABASE_HOST: postgres
         working_dir: /go/src/github.com/PrunedNeuron/Fluoride
         ports:
             - 3000:3000
