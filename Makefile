@@ -1,94 +1,75 @@
+# EXECUTABLE=Fluoride
 
-# VERSION := $(shell git describe --tags)
-BUILD := $(shell git rev-parse --short HEAD)
-PROJECTNAME := $(shell basename "$(PWD)")
+# .PHONY: all build build-static
 
-# Go related variables.
-GOBASE := $(shell pwd)
-GOPATH := $(GOBASE)/vendor:$(GOBASE)
-GOBIN := $(GOBASE)/bin
-GOFILES := $(wildcard *.go)
+# default: build build-static
 
-# Use linker flags to provide version/build settings
-LDFLAGS=-ldflags "-X=main.Version=$(1.0.0) -X=main.Build=$(BUILD)"
+# build: ## Builds a dynamic linked binary
+# 	go version
+# 	go build -o bin/${EXECUTABLE}
 
-# Redirect error output to a file, so we can show it in development mode.
-STDERR := /tmp/.$(PROJECTNAME)-stderr.txt
+# build-static: ## Builds a static binary
+# 	CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o bin/static/${EXECUTABLE}
 
-# PID file will keep the process id of the server
-PID := /tmp/.$(PROJECTNAME).pid
+GO111MODULES=on
+APP?=fluoride
+REGISTRY?=gcr.io/images
+COMMIT_SHA=$(shell git rev-parse --short HEAD)
+TARGETOS=linux
+TARGETARCH=amd64
 
-# Make is verbose in Linux. Make it silent.
-MAKEFLAGS += --silent    
 
-## install: Install missing dependencies. Runs `go get` internally. e.g; make install get=github.com/foo/bar
-install: go-get
+.PHONY: build
+## build: build the application
+build: clean
+	@echo "Building..."
+	@CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags netgo -ldflags "-s -w" -a -installsuffix cgo -o bin/${APP}
 
-## start: Start in development mode. Auto-starts when code changes.
-start:
-	@bash -c "trap 'make stop' EXIT; $(MAKE) clean compile start-server watch run='make clean compile start-server'"
+.PHONY: run
+## run: runs go run main.go
+run: build
+	# go run main.go
+	./bin/fluoride
 
-## stop: Stop development mode.
-stop: stop-server
-
-start-server: stop-server
-	@echo "  >  $(PROJECTNAME) is available at $(ADDR)"
-	@-$(GOBIN)/$(PROJECTNAME) 2>&1 & echo $$! > $(PID)
-	@cat $(PID) | sed "/^/s/^/  \>  PID: /"
-
-stop-server:
-	@-touch $(PID)
-	@-kill `cat $(PID)` 2> /dev/null || true
-	@-rm $(PID)
-
-## watch: Run given command when code changes. e.g; make watch run="echo 'hey'"
-watch:
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) yolo -i . -e vendor -e bin -c "$(run)"
-
-restart-server: stop-server start-server
-
-## compile: Compile the binary.
-compile:
-	@-touch $(STDERR)
-	@-rm $(STDERR)
-	@-$(MAKE) -s go-compile 2> $(STDERR)
-	@cat $(STDERR) | sed -e '1s/.*/\nError:\n/'  | sed 's/make\[.*/ /' | sed "/^/s/^/     /" 1>&2
-
-## exec: Run given command, wrapped with custom GOPATH. e.g; make exec run="go test ./..."
-exec:
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) $(run)
-
-## clean: Clean build files. Runs `go clean` internally.
+.PHONY: clean
+## clean: cleans the binary
 clean:
-	@-rm $(GOBIN)/$(PROJECTNAME) 2> /dev/null
-	@-$(MAKE) go-clean
+	@echo "Cleaning"
+	@go clean
 
-go-compile: go-get go-build
+.PHONY: test
+## test: runs go test with default values
+test:
+	go test -v -count=1 -race ./...
 
-go-build:
-	@echo "  >  Building binary..."
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(PROJECTNAME) $(GOFILES)
+# helper rule for deployment
+check-environment:
+ifndef ENV
+	$(error ENV not set, allowed values - `staging` or `production`)
+endif
 
-go-generate:
-	@echo "  >  Generating dependency files..."
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go generate $(generate)
+.PHONY: docker-build-server
+## docker-build-server: builds the docker image for the server
+docker-build-server:
+	sudo docker build -t ${APP}:${COMMIT_SHA} -f docker/server/Dockerfile .
 
-go-get:
-	@echo "  >  Checking if there is any missing dependencies..."
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go get $(get)
+.PHONY: docker-compose-build
+## docker-compose-build: builds using docker-compose
+docker-compose-build:
+	sudo docker-compose build --build-arg TARGETOS=linux --build-arg TARGETARCH=amd64
 
-go-install:
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go install $(GOFILES)
+.PHONY: docker-compose-up
+## docker-compose: builds using docker-compose
+docker-compose-up: docker-compose-build
+	sudo docker-compose up
 
-go-clean:
-	@echo "  >  Cleaning build cache"
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
+.PHONY: docker-push
+## docker-push: pushes the docker image to registry
+docker-push: check-environment docker-build
+	docker push ${REGISTRY}/${ENV}/${APP}:${COMMIT_SHA}
 
 .PHONY: help
-all: help
-help: Makefile
-	@echo
-	@echo " Choose a command run in "$(PROJECTNAME)":"
-	@echo
-	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
-	@echo
+## help: Prints this help message
+help:
+	@echo "Usage: \n"
+	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
