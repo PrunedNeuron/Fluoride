@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/pkg/model"
 	"github.com/PrunedNeuron/Fluoride/pkg/errors"
 	"github.com/go-chi/render"
 )

@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/PrunedNeuron/Fluoride/config"
-	"github.com/PrunedNeuron/Fluoride/internal/model"
-	"github.com/PrunedNeuron/Fluoride/internal/service"
-	"github.com/PrunedNeuron/Fluoride/internal/store"
+	"github.com/PrunedNeuron/Fluoride/pkg/model"
+	"github.com/PrunedNeuron/Fluoride/pkg/service"
+	"github.com/PrunedNeuron/Fluoride/pkg/store"
 	"github.com/go-chi/render"
 	"go.uber.org/zap"
 )

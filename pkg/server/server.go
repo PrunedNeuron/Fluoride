@@ -7,12 +7,11 @@ import (
 	"time"
 
 	"github.com/PrunedNeuron/Fluoride/config"
-	"github.com/PrunedNeuron/Fluoride/internal/routes"
 	"github.com/PrunedNeuron/Fluoride/pkg/logger"
+	"github.com/PrunedNeuron/Fluoride/pkg/routes"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -20,12 +19,16 @@ import (
 // Server type
 type Server struct {
 	logger     *zap.SugaredLogger
+	conf       config.ServerConfiguration
 	router     chi.Router
 	httpServer *http.Server
 }
 
 // New will set up a new Server
 func New() (*Server, error) {
+
+	conf := config.GetConfig().Server
+
 	router := chi.NewRouter()
 	router.Use(Helmet())
 	router.Use(middleware.RequestID)
@@ -35,12 +38,12 @@ func New() (*Server, error) {
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 
 	router.Use(logger.DefaultHTTPLogger(
-		viper.GetBool("server.log_requests_body"),
-		viper.GetStringSlice("server.log_disabled_http"),
+		conf.LogRequestsBody,
+		conf.LogDisabledHTTP,
 	))
 
 	// Do the logging
-	if viper.GetBool("server.log_requests") {
+	if conf.LogRequests {
 		router.Use(func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				start := time.Now()
@@ -66,6 +69,7 @@ func New() (*Server, error) {
 
 	server := &Server{
 		logger: zap.S().With("package", "server"),
+		conf:   conf,
 		router: router,
 	}
 
@@ -80,12 +84,12 @@ func (server *Server) Serve() error {
 
 	// Create the http server and assign host, port from config
 	server.httpServer = &http.Server{
-		Addr:    net.JoinHostPort(config.GetConfig().Server.Host, config.GetConfig().Server.Port),
+		Addr:    net.JoinHostPort(server.conf.Host, server.conf.Port),
 		Handler: server.router,
 	}
 
 	// Listen for requests
-	listener, err := net.Listen(viper.GetString("server.network"), server.httpServer.Addr)
+	listener, err := net.Listen(server.conf.Network, server.httpServer.Addr)
 	if err != nil {
 		return fmt.Errorf("Could not listen on %s: %v", server.httpServer.Addr, err)
 	}
@@ -96,12 +100,12 @@ func (server *Server) Serve() error {
 		}
 	}()
 
-	server.logger.Infow("Server listening", "address", "http://"+server.httpServer.Addr)
+	server.logger.Infow("Server ready", "address", "http://"+server.httpServer.Addr)
 
 	// Profiler
-	if viper.GetBool("server.profiler_enabled") && viper.GetString("server.profiler_path") != "" {
-		zap.S().Debugw("Profiler enabled on server", "path", viper.GetString("server.profiler_path"))
-		server.router.Mount(viper.GetString("server.profiler_path"), middleware.Profiler())
+	if server.conf.ProfilerEnabled && server.conf.ProfilerPath != "" {
+		zap.S().Debugw("Profiler enabled on server", "path", server.conf.ProfilerPath)
+		server.router.Mount(server.conf.ProfilerPath, middleware.Profiler())
 	}
 
 	return nil

@@ -1,10 +1,9 @@
 package store
 
 import (
-	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/config"
+	"github.com/PrunedNeuron/Fluoride/pkg/model"
 	"github.com/PrunedNeuron/Fluoride/pkg/database"
-
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -33,13 +32,13 @@ func NewPackStore() PackStore {
 	var packStore PackStore
 	var err error
 
-	switch viper.GetString("storage.type") {
+	switch config.GetConfig().Database.Type {
 	case "postgres":
 		packStore, err = database.New()
 	}
 
 	if err != nil {
-		zap.S().Fatalw("Database error", "error", err)
+		zap.S().Errorw("Database error", "error", err)
 	}
 	return packStore
 }

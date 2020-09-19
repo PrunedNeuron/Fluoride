@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/PrunedNeuron/Fluoride/internal/model"
 	"github.com/PrunedNeuron/Fluoride/pkg/errors"
+	"github.com/PrunedNeuron/Fluoride/pkg/model"
 	"github.com/go-chi/render"
 )
 

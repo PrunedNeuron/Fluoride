@@ -1,10 +1,9 @@
 package store
 
 import (
-	"github.com/PrunedNeuron/Fluoride/internal/model"
+	"github.com/PrunedNeuron/Fluoride/config"
 	"github.com/PrunedNeuron/Fluoride/pkg/database"
-
-	"github.com/spf13/viper"
+	"github.com/PrunedNeuron/Fluoride/pkg/model"
 	"go.uber.org/zap"
 )
 
@@ -55,13 +54,13 @@ func NewIconStore() IconStore {
 	var iconStore IconStore
 	var err error
 
-	switch viper.GetString("storage.type") {
+	switch config.GetConfig().Database.Type {
 	case "postgres":
 		iconStore, err = database.New()
 	}
 
 	if err != nil {
-		zap.S().Fatalw("Database error", "error", err)
+		zap.S().Errorw("Database error", "error", err)
 	}
 	return iconStore
 }

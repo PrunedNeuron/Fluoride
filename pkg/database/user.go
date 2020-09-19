@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/PrunedNeuron/Fluoride/internal/model"
 	"github.com/PrunedNeuron/Fluoride/pkg/errors"
+	"github.com/PrunedNeuron/Fluoride/pkg/model"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
 	"go.uber.org/zap"

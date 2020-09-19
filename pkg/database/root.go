@@ -4,17 +4,16 @@ import (
 	"fmt"
 
 	_ "github.com/jackc/pgx/stdlib" // For the pg driver
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
 // CreateSchema creates the required schema
 func (dbc *DBClient) CreateSchema() error {
 
-	// Create users table if it does not exist yet
-	zap.S().Debugw("Creating users table if it does not yet exist")
+	// Create schema if it does not exist yet
+	zap.S().Debugw("Creating schema if it does not yet exist")
 
-	username := viper.GetString("storage.username")
+	username := dbc.conf.Username
 
 	query := fmt.Sprintf(`
 			CREATE SCHEMA IF NOT EXISTS secure AUTHORIZATION %s

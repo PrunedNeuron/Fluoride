@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"github.com/PrunedNeuron/Fluoride/internal/controller"
-
+	"github.com/PrunedNeuron/Fluoride/pkg/controller"
 	"github.com/go-chi/chi"
 )
 

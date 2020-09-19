@@ -13,15 +13,15 @@ var serverCmd = &cobra.Command{
 	Long:    "Start the server and respond to requests",
 	Aliases: []string{"server", "api"},
 	Run: func(cmd *cobra.Command, args []string) {
+		zap.S().Infow("Application version " + config.GetConfig().Application.Version)
 		// Create server
 		logger.Info("Creating server")
 		server, err := server.New()
 		if err != nil {
 			logger.Errorf("Failed to start server, error: ", err.Error())
 		}
-		err = server.Serve()
 
-		if err != nil {
+		if err = server.Serve(); err != nil {
 			logger.Fatalw("Could not start the server", "error", err)
 		}
 
@@ -29,8 +29,4 @@ var serverCmd = &cobra.Command{
 		config.Stop.Wait()   // wait until everything else has gracefully exited
 		zap.L().Sync()       // Flush the logger
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(serverCmd)
 }
