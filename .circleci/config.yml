@@ -5,22 +5,7 @@ version: 2
 jobs:
     build:
         docker:
-            - image: circleci/golang:alpine
-            - image: postgres:latest
-              environment:
-                  POSTGRES_DB: fluoride_dev
-                  POSTGRES_USER: ayush
-                  POSTGRES_PASSWORD: ayush
-                  DATABASE_HOST: postgres
-                  DATABASE_DATABASE: fluoride_dev
-                  DATABASE_USERNAME: ayush
-                  DATABASE_PASSWORD: ayush
-                  DATABASE_SSL: disable
-                  PROFILER_HOST: "0.0.0.0"
-                  PROFILER_PORT: "3002"
-                  SERVER_HOST: "0.0.0.0"
-                  SERVER_PORT: "3000"
-        working_directory: /go/src/github.com/PrunedNeuron/Fluoride
+            - image: cimg/base:2020.01
         steps:
             - checkout
             - setup_remote_docker: # (2)
