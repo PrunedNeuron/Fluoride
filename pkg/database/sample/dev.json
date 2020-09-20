@@ -1,0 +1,23 @@
+[
+	{
+		"role": "developer",
+		"name": "Ayush Mishra",
+		"username": "ayush",
+		"email": "ayushm017@gmail.com",
+		"url": "https://ayushm.dev"
+	},
+	{
+		"role": "developer",
+		"name": "John Doe",
+		"username": "jdoe",
+		"email": "johndoe@gmail.com",
+		"url": "https://johndoe.co"
+	},
+	{
+		"role": "developer",
+		"name": "Mary Jane",
+		"username": "mjane",
+		"email": "janemary@gmail.com",
+		"url": "https://maryjane.com"
+	}
+]

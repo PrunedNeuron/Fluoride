@@ -1,6 +1,6 @@
 package main
 
-import "fluoride/cmd"
+import "github.com/PrunedNeuron/Fluoride/cmd"
 
 func main() {
 	cmd.Execute()

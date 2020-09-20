@@ -1,0 +1,54 @@
+version: "3.6"
+services:
+    db:
+        container_name: postgres
+        build:
+            context: .
+            dockerfile: docker/db/Dockerfile
+        restart: on-failure
+        environment:
+            POSTGRES_DB: fluoride_dev
+            POSTGRES_USER: ayush
+            POSTGRES_PASSWORD: ayush
+
+        volumes:
+            - database-data:/var/lib/postgresql/data/
+        ports:
+            - 5432:5432
+        networks:
+            - backend
+
+    server:
+        container_name: server
+        build:
+            context: .
+            dockerfile: docker/server/Dockerfile
+        restart: on-failure
+        environment:
+            APPLICATION_ENV: development
+
+            DATABASE_HOST: postgres
+            DATABASE_DATABASE: fluoride_dev
+            DATABASE_USERNAME: ayush
+            DATABASE_PASSWORD: ayush
+            DATABASE_SSL: disable
+
+            PROFILER_HOST: 0.0.0.0
+            PROFILER_PORT: 3002
+
+            SERVER_HOST: 0.0.0.0
+            SERVER_PORT: 3000
+        ports:
+            - 3000:3000
+        depends_on:
+            - db
+        networks:
+            - backend
+
+volumes:
+    database-data:
+        driver: local
+
+networks:
+    backend:
+        driver: bridge

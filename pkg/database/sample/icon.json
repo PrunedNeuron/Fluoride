@@ -1,0 +1,260 @@
+[
+	{
+		"name": "KineMaster",
+		"component": "com.nexstreaming.app.kinemasterfree/com.nextreaming.nexeditorui.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.nexstreaming.app.kinemasterfree",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Free Fire",
+		"component": "com.dts.freefireth/com.dts.freefireth.FFMainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.dts.freefireth",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "FX",
+		"component": "nextapp.fx/nextapp.fx.ui.textedit.TextEditorActivity",
+		"url": "https://play.google.com/store/apps/details?id=nextapp.fx",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "YouTube TV",
+		"component": "com.google.android.apps.youtube.unplugged/com.google.android.apps.youtube.unplugged.features.main.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.google.android.apps.youtube.unplugged",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "The Eyes Of Ara",
+		"component": "com.Stones100.TheEyesOfAra/com.unity3d.player.UnityPlayerActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.Stones100.TheEyesOfAra",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Clipboard Manager",
+		"component": "devdnua.clipboard.pro/devdnua.clipboard.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=devdnua.clipboard.pro",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Eon Pro",
+		"component": "qijaz221.github.io.musicplayer.premium/qijaz221.github.io.musicplayer.startup.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=qijaz221.github.io.musicplayer.premium",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Alfred Camera",
+		"component": "com.ivuu/com.ivuu.BrandingActivityCompat",
+		"url": "https://play.google.com/store/apps/details?id=com.ivuu",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "APK Extractor",
+		"component": "com.iamnbty.apkextractor/com.iamnbty.apkextractor.activity.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.iamnbty.apkextractor",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "DeviantArt",
+		"component": "com.deviantart.android.damobile/com.deviantart.android.damobile.activity.HomeActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.deviantart.android.damobile",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Mi Store",
+		"component": "com.mi.global.shop/com.mi.global.shop.activity.LaunchActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.mi.global.shop",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "HBO Max",
+		"component": "com.hbo.hbonow/com.hbo.go.LaunchActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.hbo.hbonow",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "KMPlayer",
+		"component": "com.kmplayer/com.kmplayer.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.kmplayer",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Trello",
+		"component": "com.trello/com.trello.home.HomeActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.trello",
+		"pack": "amphetamine"
+	},
+	{
+		"name": "Clash Of Clans",
+		"component": "com.supercell.clashofclans/com.supercell.titan.GameApp",
+		"url": "https://play.google.com/store/apps/details?id=com.supercell.clashofclans",
+		"pack": "levira"
+	},
+	{
+		"name": "M Indicator",
+		"component": "com.mobond.mindicator/com.mobond.mindicator.SplashUI",
+		"url": "https://play.google.com/store/apps/details?id=com.mobond.mindicator",
+		"pack": "levira"
+	},
+	{
+		"name": "Resplash",
+		"component": "com.b_lam.resplash/com.b_lam.resplash.activities.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.b_lam.resplash",
+		"pack": "levira"
+	},
+	{
+		"name": "RFS",
+		"component": "it.rortos.realflightsimulator/com.unity3d.player.UnityPlayerActivity",
+		"url": "https://play.google.com/store/apps/details?id=it.rortos.realflightsimulator",
+		"pack": "levira"
+	},
+	{
+		"name": "Zero",
+		"component": "com.zerofasting.zero/com.zerofasting.zero.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.zerofasting.zero",
+		"pack": "levira"
+	},
+	{
+		"name": "Material Terminal",
+		"component": "yarolegovich.materialterminal/yarolegovich.materialterminal.Term",
+		"url": "https://play.google.com/store/apps/details?id=yarolegovich.materialterminal",
+		"pack": "levira"
+	},
+	{
+		"name": "Next Bus Barcelona",
+		"component": "cat.ereza.properbusbcn/cat.ereza.properbusbcn.ui.activities.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=cat.ereza.properbusbcn",
+		"pack": "levira"
+	},
+	{
+		"name": "AdAway",
+		"component": "org.adaway/org.adaway.ui.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=org.adaway",
+		"pack": "levira"
+	},
+	{
+		"name": "Device Help",
+		"component": "com.motorola.genie/com.motorola.genie.main.start.LaunchActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.motorola.genie",
+		"pack": "levira"
+	},
+	{
+		"name": "Hotstar",
+		"component": "in.startv.hotstar/in.startv.hotstar.rocky.launch.splash.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=in.startv.hotstar",
+		"pack": "levira"
+	},
+	{
+		"name": "Popcorn Time",
+		"component": "dp.ws.popcorntime/se.popcorn_time.mobile.ui.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=dp.ws.popcorntime",
+		"pack": "levira"
+	},
+	{
+		"name": "Expense Manager",
+		"component": "com.expensemanager/com.expensemanager.ExpenseManager",
+		"url": "https://play.google.com/store/apps/details?id=com.expensemanager",
+		"pack": "levira"
+	},
+	{
+		"name": "Google Ads",
+		"component": "com.google.android.apps.adwords/com.google.android.apps.adwords.InitialLoadingActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.google.android.apps.adwords",
+		"pack": "levira"
+	},
+	{
+		"name": "AnyBooks",
+		"component": "com.newanybooks/co.anybooks.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.newanybooks",
+		"pack": "levira"
+	},
+	{
+		"name": "Airtel Xstream",
+		"component": "tv.accedo.airtel.wynk/tv.accedo.airtel.wynk.presentation.view.activity.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=tv.accedo.airtel.wynk",
+		"pack": "levira"
+	},
+	{
+		"name": "Ooma",
+		"component": "com.ooma.mobile2/com.ooma.mobile.ui.login.LoginActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.ooma.mobile2",
+		"pack": "levira"
+	},
+	{
+		"name": "CamScanner",
+		"component": "com.intsig.camscanner/com.intsig.camscanner.launcher.WelcomeDefaultActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.intsig.camscanner",
+		"pack": "levira"
+	},
+	{
+		"name": "Phone",
+		"component": "com.sonymobile.android.dialer/com.android.dialer.app.DialtactsActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.sonymobile.android.dialer",
+		"pack": "levira"
+	},
+	{
+		"name": "Zen Pinball",
+		"component": "com.zenstudios.ZenPinball/com.zenstudios.ZenPinball.ZPMainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.zenstudios.ZenPinball",
+		"pack": "levira"
+	},
+	{
+		"name": "Centerbox",
+		"component": "mercadapp.fgl.com.centerbox/mercadapp.fgl.com.mercadapp.activities.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=mercadapp.fgl.com.centerbox",
+		"pack": "narvo"
+	},
+	{
+		"name": "Banco Inter",
+		"component": "br.com.intermedium/br.com.intermedium.splash.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=br.com.intermedium",
+		"pack": "narvo"
+	},
+	{
+		"name": "Psiphon Pro",
+		"component": "com.psiphon3.subscription/com.psiphon3.StatusActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.psiphon3.subscription",
+		"pack": "narvo"
+	},
+	{
+		"name": "Aurora Store",
+		"component": "com.aurora.store/com.aurora.store.ui.single.activity.SplashActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.aurora.store",
+		"pack": "narvo"
+	},
+	{
+		"name": "AIDS",
+		"component": "com.nick80835.add/com.nick80835.add.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.nick80835.add",
+		"pack": "narvo"
+	},
+	{
+		"name": "Device Help",
+		"component": "com.motorola.genie/com.motorola.genie.app.DashboardActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.motorola.genie",
+		"pack": "narvo"
+	},
+	{
+		"name": "Bold",
+		"component": "com.bold.icons.flatedge.iconpack/com.bold.icons.flatedge.iconpack.MainActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.bold.icons.flatedge.iconpack",
+		"pack": "narvo"
+	},
+	{
+		"name": "Community",
+		"component": "net.oneplus.forums/net.oneplus.forums.ui.activity.CheckPermissionActivity",
+		"url": "https://play.google.com/store/apps/details?id=net.oneplus.forums",
+		"pack": "narvo"
+	},
+	{
+		"name": "AI Gallery",
+		"component": "com.gallery20/com.gallery20.activities.GalleryActivity",
+		"url": "https://play.google.com/store/apps/details?id=com.gallery20",
+		"pack": "narvo"
+	},
+	{
+		"name": "MconnectLite",
+		"component": "com.conversdigital/com.conversdigital.MainIndexLoading",
+		"url": "https://play.google.com/store/apps/details?id=com.conversdigital",
+		"pack": "narvo"
+	}
+]

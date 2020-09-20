@@ -26,3 +26,8 @@ go run main.go serve
 
 `/icons` - `GET`, `POST`
 `/icons/count` - `GET`
+
+
+### NOTE
+
+- Icon requests are referred to as just icons, for succinctness and simplicity.

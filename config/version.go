@@ -1,9 +1,5 @@
 package config
 
-import (
-	"github.com/spf13/viper"
-)
-
 var (
 	// Executable is the name of the exec
 	Executable = "fluoride"
@@ -12,5 +8,6 @@ var (
 )
 
 func init() {
-	Version = viper.GetString("application.version")
+	Executable = GetConfig().Application.Name
+	Version = GetConfig().Application.Version
 }

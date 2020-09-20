@@ -1,0 +1,20 @@
+[
+	{
+		"name": "Amphetamine",
+		"developer_username": "ayush",
+		"url": "https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine",
+		"billing_status": "unset"
+	},
+	{
+		"name": "Levira",
+		"developer_username": "mjane",
+		"url": "https://play.google.com/store/apps/details?id=com.mjane.levira",
+		"billing_status": "unset"
+	},
+	{
+		"name": "Narvo",
+		"developer_username": "jdoe",
+		"url": "https://play.google.com/store/apps/details?id=com.jdoe.narvo",
+		"billing_status": "unset"
+	}
+]

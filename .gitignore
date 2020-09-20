@@ -41,9 +41,6 @@ _cgo_export.*
 
 _testmain.go
 
-
-
-
 ### Linux ###
 *~
 
@@ -86,7 +83,7 @@ _testmain.go
 # Logs and databases #
 ######################
 *.log
-*.sql
+# *.sql
 *.sqlite
  
 # OS generated files #
@@ -98,3 +95,8 @@ _testmain.go
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Ignore `bin` dir
+bin/
+# or
+*/bin/*
