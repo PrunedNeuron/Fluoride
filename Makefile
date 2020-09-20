@@ -1,22 +1,11 @@
-# EXECUTABLE=Fluoride
-
-# .PHONY: all build build-static
-
-# default: build build-static
-
-# build: ## Builds a dynamic linked binary
-# 	go version
-# 	go build -o bin/${EXECUTABLE}
-
-# build-static: ## Builds a static binary
-# 	CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -a -installsuffix cgo -o bin/static/${EXECUTABLE}
-
 GO111MODULES=on
-APP?=fluoride
-REGISTRY?=gcr.io/images
+APP?=$(notdir $(shell pwd))
+REGISTRY?=$(shell docker info | sed '/Registry:/!d;s/.* //')
+DOCKER_USERNAME=$(shell docker info | sed '/Username:/!d;s/.* //')
 COMMIT_SHA=$(shell git rev-parse --short HEAD)
 TARGETOS=linux
 TARGETARCH=amd64
+ENV=staging
 
 default: build
 
@@ -30,21 +19,24 @@ build: clean
 .PHONY: run
 ## run: runs go run main.go
 run: build
-	# go run main.go
-	./bin/fluoride
+	@echo
+	@./bin/${APP}
+
+.PHONY: serve
+## serve: runs go run main.go serve
+serve: build
+	@echo
+	@./bin/${APP} serve
 
 .PHONY: clean
 ## clean: cleans the binary
 clean:
 	@echo "Cleaning"
+	@echo "Deleting binaries"
+	@rm -rf bin
 	@go clean
 	@echo "Tidying go mod"
 	@go mod tidy
-
-.PHONY: test
-## test: runs go test with default values
-test:
-	go test -v -count=1 -race ./...
 
 # helper rule for deployment
 check-environment:
@@ -52,25 +44,46 @@ ifndef ENV
 	$(error ENV not set, allowed values - `staging` or `production`)
 endif
 
+.PHONY: compose
+## compose: docker compose build & up
+compose: compose-build compose-up
+
+.PHONY: compose-clean
+## compose-clean: shuts down and removes the containers
+compose-clean:
+	sudo docker-compose down
+	sudo docker-compose rm
+
+.PHONY: compose-build
+## compose-build: builds using docker-compose
+compose-build: compose-clean
+	sudo docker-compose build --build-arg TARGETOS=${TARGETOS} --build-arg TARGETARCH=${TARGETARCH}
+
+.PHONY: compose-up
+## docker-compose: builds using docker-compose
+compose-up: compose-build
+	sudo docker-compose up
+
 .PHONY: docker-build-server
 ## docker-build-server: builds the docker image for the server
 docker-build-server:
-	sudo docker build -t ${APP}:${COMMIT_SHA} -f docker/server/Dockerfile .
+	sudo docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/server/Dockerfile .
 
-.PHONY: docker-compose-build
-## docker-compose-build: builds using docker-compose
-docker-compose-build:
-	sudo docker-compose build --build-arg TARGETOS=linux --build-arg TARGETARCH=amd64
+.PHONY: docker-build-db
+## docker-build-db: build db Dockerfile
+docker-build-db: 
+	sudo docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/db/Dockerfile .
 
-.PHONY: docker-compose-up
-## docker-compose: builds using docker-compose
-docker-compose-up: docker-compose-build
-	sudo docker-compose up
+.PHONY: docker-build
+## docker-build: builds both server and db Dockerfiles
+docker-build: docker-build-server docker-build-db
 
 .PHONY: docker-push
 ## docker-push: pushes the docker image to registry
 docker-push: check-environment docker-build
-	docker push ${REGISTRY}/${ENV}/${APP}:${COMMIT_SHA}
+# sudo docker push ${REGISTRY}/${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
+	sudo docker login
+	sudo docker push ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
 
 .PHONY: help
 ## help: Prints this help message
