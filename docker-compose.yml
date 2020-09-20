@@ -13,7 +13,6 @@ services:
 
         volumes:
             - database-data:/var/lib/postgresql/data/
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         ports:
             - 5432:5432
         networks:
@@ -26,6 +25,8 @@ services:
             dockerfile: docker/server/Dockerfile
         restart: on-failure
         environment:
+            APPLICATION_ENV: development
+
             DATABASE_HOST: postgres
             DATABASE_DATABASE: fluoride_dev
             DATABASE_USERNAME: ayush
@@ -37,7 +38,6 @@ services:
 
             SERVER_HOST: 0.0.0.0
             SERVER_PORT: 3000
-        working_dir: /go/src/github.com/PrunedNeuron/Fluoride
         ports:
             - 3000:3000
         depends_on:
