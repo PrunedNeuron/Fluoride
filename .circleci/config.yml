@@ -9,6 +9,7 @@ jobs:
         steps:
             - checkout
             - setup_remote_docker: # (2)
+                  version: 19.03.12
                   docker_layer_caching: true # (3)
             - run:
                   name: Build using docker compose
