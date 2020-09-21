@@ -1,13 +1,19 @@
 GO111MODULES=on
-APP?=$(notdir $(shell pwd))
+APP:=$(notdir $(shell pwd))
+DOCKER_USERNAME:=$(shell docker info | sed '/Username:/!d;s/.* //')
 REGISTRY?=$(shell docker info | sed '/Registry:/!d;s/.* //')
-DOCKER_USERNAME=$(shell docker info | sed '/Username:/!d;s/.* //')
 COMMIT_SHA=$(shell git rev-parse --short HEAD)
 TARGETOS=linux
 TARGETARCH=amd64
 ENV=staging
 
 default: build
+
+.PHONY: dependencies
+## dependencies: download dependencies
+dependencies: clean
+	@echo "Downloading dependencies"
+	@go mod download
 
 .PHONY: build
 ## build: build the application
@@ -51,28 +57,28 @@ compose: compose-build compose-up
 .PHONY: compose-clean
 ## compose-clean: shuts down and removes the containers
 compose-clean:
-	sudo docker-compose down
+	@sudo docker-compose down && \
 	sudo docker-compose rm
 
 .PHONY: compose-build
 ## compose-build: builds using docker-compose
 compose-build: compose-clean
-	sudo docker-compose build --build-arg TARGETOS=${TARGETOS} --build-arg TARGETARCH=${TARGETARCH}
+	@sudo COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --build-arg TARGETOS=${TARGETOS} --build-arg TARGETARCH=${TARGETARCH}
 
 .PHONY: compose-up
 ## docker-compose: builds using docker-compose
 compose-up: compose-build
-	sudo docker-compose up
+	@sudo docker-compose up
 
 .PHONY: docker-build-server
 ## docker-build-server: builds the docker image for the server
 docker-build-server:
-	sudo docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/server/Dockerfile .
+	@DOCKER_BUILDKIT=1 docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/server/Dockerfile .
 
 .PHONY: docker-build-db
 ## docker-build-db: build db Dockerfile
 docker-build-db: 
-	sudo docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/db/Dockerfile .
+	@DOCKER_BUILDKIT=1 docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/db/Dockerfile .
 
 .PHONY: docker-build
 ## docker-build: builds both server and db Dockerfiles
@@ -82,8 +88,8 @@ docker-build: docker-build-server docker-build-db
 ## docker-push: pushes the docker image to registry
 docker-push: check-environment docker-build
 # sudo docker push ${REGISTRY}/${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
-	sudo docker login
-	sudo docker push ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
+	@sudo docker login && \
+	@sudo docker push ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
 
 .PHONY: help
 ## help: Prints this help message
