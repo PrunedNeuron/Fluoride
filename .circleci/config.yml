@@ -14,4 +14,4 @@ jobs:
                   name: Build using docker compose
                   command: |
                       set -x
-                      docker-compose build
+                      COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
