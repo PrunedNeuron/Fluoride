@@ -1,11 +1,11 @@
 GO111MODULES=on
 APP:=$(notdir $(shell pwd))
-DOCKER_USERNAME:=$(shell docker info | sed '/Username:/!d;s/.* //')
-REGISTRY?=$(shell docker info | sed '/Registry:/!d;s/.* //')
+# DOCKER_USERNAME:=$(shell docker info | sed '/Username:/!d;s/.* //')
+# Use organization name instead
+DOCKER_USERNAME:=fluoride
+DOCKER_REGISTRY?=$(shell docker info | sed '/Registry:/!d;s/.* //')
 COMMIT_SHA=$(shell git rev-parse --short HEAD)
-TARGETOS=linux
-TARGETARCH=amd64
-ENV=staging
+DOCKER_ENV?=$(shell env | grep "DOCKER")
 
 default: build
 
@@ -44,12 +44,6 @@ clean:
 	@echo "Tidying go mod"
 	@go mod tidy
 
-# helper rule for deployment
-check-environment:
-ifndef ENV
-	$(error ENV not set, allowed values - `staging` or `production`)
-endif
-
 .PHONY: compose
 ## compose: docker compose build & up
 compose: compose-build compose-up
@@ -63,36 +57,50 @@ compose-clean:
 .PHONY: compose-build
 ## compose-build: builds using docker-compose
 compose-build: compose-clean
-	@sudo COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build --build-arg TARGETOS=${TARGETOS} --build-arg TARGETARCH=${TARGETARCH}
+	@sudo ${DOCKER_ENV} docker-compose build --build-arg TARGETOS=${TARGETOS} --build-arg TARGETARCH=${TARGETARCH}
 
 .PHONY: compose-up
-## docker-compose: builds using docker-compose
+## compose-up: runs using docker compose
 compose-up: compose-build
 	@sudo docker-compose up
 
 .PHONY: docker-build-server
 ## docker-build-server: builds the docker image for the server
 docker-build-server:
-	@DOCKER_BUILDKIT=1 docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/server/Dockerfile .
+	@sudo ${DOCKER_ENV} docker build -t ${DOCKER_USERNAME}/server:${COMMIT_SHA} -f docker/server/Dockerfile .
 
-.PHONY: docker-build-db
-## docker-build-db: build db Dockerfile
-docker-build-db: 
-	@DOCKER_BUILDKIT=1 docker build -t ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA} -f docker/db/Dockerfile .
+.PHONY: docker-build-postgres
+## docker-build-postgres: build db Dockerfile
+docker-build-postgres:
+	@sudo ${DOCKER_ENV} docker build -t ${DOCKER_USERNAME}/postgres:${COMMIT_SHA} -f docker/db/Dockerfile .
 
 .PHONY: docker-build
 ## docker-build: builds both server and db Dockerfiles
-docker-build: docker-build-server docker-build-db
+docker-build: docker-build-server docker-build-postgres
+
+.PHONY: docker-login
+## docker-login: pushes the server and postgres docker images to DOCKER_REGISTRY
+docker-login:
+	@sudo docker login
+
 
 .PHONY: docker-push
-## docker-push: pushes the docker image to registry
-docker-push: check-environment docker-build
-# sudo docker push ${REGISTRY}/${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
-	@sudo docker login && \
-	@sudo docker push ${DOCKER_USERNAME}/${APP}:${COMMIT_SHA}
+## docker-push: pushes the server and postgres docker images to DOCKER_REGISTRY
+docker-push: docker-login docker-push-postgres docker-push-server
+
+.PHONY: docker-push-postgres
+## docker-push-postgres: pushes the db docker image to DOCKER_REGISTRY
+docker-push-postgres: docker-build-postgres
+	@sudo docker push ${DOCKER_USERNAME}/postgres:${COMMIT_SHA}
+
+.PHONY: docker-push-server
+## docker-push-server: pushes the server docker image to DOCKER_REGISTRY
+docker-push-server: docker-build
+	
+	@sudo docker push ${DOCKER_USERNAME}/server:${COMMIT_SHA}
 
 .PHONY: help
 ## help: Prints this help message
 help:
-	@echo "Usage: \n"
+	@echo -e "Usage: \n"
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
