@@ -10,7 +10,6 @@ services:
             POSTGRES_DB: fluoride_dev
             POSTGRES_USER: ayush
             POSTGRES_PASSWORD: ayush
-
         volumes:
             - database-data:/var/lib/postgresql/data/
         ports:
