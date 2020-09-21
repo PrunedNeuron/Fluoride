@@ -24,6 +24,8 @@ services:
             context: .
             dockerfile: docker/server/Dockerfile
         restart: on-failure
+        volumes:
+            - go-cache:/go/pkg/mod/cache
         environment:
             APPLICATION_ENV: development
 
@@ -47,6 +49,8 @@ services:
 
 volumes:
     database-data:
+        driver: local
+    go-cache:
         driver: local
 
 networks:
