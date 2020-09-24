@@ -14,11 +14,11 @@ RUN go mod download
 
 COPY . .
 
-RUN make
+RUN ./run build
 
 # Build minimal image
 # Busybox has /bin/sh and is smaller than alpine
-FROM busybox
+FROM busybox:latest
 WORKDIR /go/src/github.com/PrunedNeuron/Fluoride/
 
 COPY --from=builder /go/src/github.com/PrunedNeuron/Fluoride/bin ./bin
