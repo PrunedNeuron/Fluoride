@@ -1,11 +1,11 @@
 #!/bin/sh
 set -e
 
-echo -e "\e[33m$(date +"%c") \e[39mWaiting for Postgres"
-
 cmd="$@"
 timer="1"
 seconds_passed=1
+
+echo -e "\e[33m$(date +"%c") \e[39mWaiting for Postgres"
 
 # until pg_isready 1>/dev/null 2>&1; do
 until nc -z postgres 5432 1>/dev/null 2>&1; do
