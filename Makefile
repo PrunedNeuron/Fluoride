@@ -19,7 +19,7 @@ dependencies: clean
 ## build: build the application
 build: clean
 	@echo "Building binary"
-	@CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags netgo -ldflags "-s -w" -o bin/${APP}
+	@CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -a -tags netgo -ldflags "-s -w" -o bin/${APP}
 	@echo "Binary built (size `stat -c '%s' "bin/${APP}" | numfmt --to=si --suffix=B`)"
 
 .PHONY: run
@@ -72,7 +72,7 @@ docker-build-server:
 .PHONY: docker-build-postgres
 ## docker-build-postgres: build db Dockerfile
 docker-build-postgres:
-	@sudo ${DOCKER_ENV} docker build -t ${DOCKER_USERNAME}/postgres:${COMMIT_SHA} -f docker/db/Dockerfile .
+	@sudo ${DOCKER_ENV} docker build -t ${DOCKER_USERNAME}/postgres:${COMMIT_SHA} -f docker/postgres/Dockerfile .
 
 .PHONY: docker-build
 ## docker-build: builds both server and db Dockerfiles
