@@ -35,7 +35,7 @@ services:
             DATABASE_SSL: disable
 
             PROFILER_HOST: 0.0.0.0
-            PROFILER_PORT: 3002
+            PROFILER_PORT: 3001
 
             SERVER_HOST: 0.0.0.0
             SERVER_PORT: 3000
