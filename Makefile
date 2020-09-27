@@ -9,11 +9,26 @@ DOCKER_ENV?=$(shell env | grep "DOCKER")
 
 default: build
 
+.PHONY: swagger-gen
+## swagger-gen: generates swagger docs
+swagger-gen:
+	swagger generate spec -m -o docs/swagger/swagger.yaml
+
+.PHONY: swagger-serve
+## swagger-serve: serves swagger docs
+swagger-serve: swagger-gen
+	swagger serve -F=swagger docs/swagger/swagger.yaml
+
 .PHONY: dependencies
 ## dependencies: download dependencies
 dependencies: clean
 	@echo "Downloading dependencies"
 	@go mod download
+
+.PHONY: install
+## install: installs dependencies
+install:
+	go install -v
 
 .PHONY: build
 ## build: build the application
