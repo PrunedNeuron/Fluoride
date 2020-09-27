@@ -13,6 +13,34 @@ import (
 )
 
 // GetIcons responds with a list of all the icons in the db
+// * GET /icons
+// swagger:operation GET /icons IconRequests GetIcons
+//
+// Get the list of all icon requests
+//
+// Fetches the entire list of all icon requests belonging to all icon packs
+// ---
+// produces:
+//     - application/json
+//
+// responses:
+//     "200":
+//         description: OK
+//         schema:
+//             type: object
+//             properties:
+//                 status:
+//                     type: string
+//                     description: status message
+//                     example: success
+//                 message:
+//                     type: string
+//                     description: informational message
+//                     example: retrieved 146 icons
+//                 icons:
+//                     type: array
+//                     items:
+//                         "$ref": "#/definitions/Icon"
 func GetIcons(w http.ResponseWriter, r *http.Request) {
 
 	list, err := iconService.GetIcons()

@@ -11,6 +11,55 @@ import (
 )
 
 // CreatePack creates a new icon pack
+// * POST /developers/{developer}/packs
+// swagger:operation POST /developers/{developer}/packs IconPacks CreatePack
+//
+// Add an icon pack
+//
+// Creates a new icon pack and adds it to the database; rejects the request on conflict
+// ---
+// consumes:
+//     - application/json
+// produces:
+//     - application/json
+//
+// security:
+//     - api_key: []
+//
+// parameters:
+//     - name: developer
+//       in: path
+//       description: username of the developer who owns the icon pack
+//       required: true
+//       type: string
+//     - name: request
+//       in: body
+//       description: information about the new icon pack
+//       required: true
+//       schema:
+//           type: object
+//           properties:
+//               name:
+//                  type: string
+//                  description: name of icon pack
+//                  example: Amphetamine
+//               developer_username:
+//                  type: string
+//                  description: name of icon pack developer
+//                  example: ayush
+//               url:
+//                  type: string
+//                  description: play store URL
+//                  example: https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine
+//               billing_status:
+//                  type: string
+//                  description: billing status (active | inactive)
+//                  example: active
+// responses:
+//     "200":
+//         description: OK
+//     "500":
+//         description: server error
 func CreatePack(w http.ResponseWriter, r *http.Request) {
 
 	dev := chi.URLParam(r, "developer")
@@ -69,6 +118,30 @@ func CreatePack(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetPacks gets all the icon packs
+// * GET /packs
+// swagger:operation GET /packs IconPacks GetPacks
+//
+// Get the list of all icon packs
+//
+// Fetches the entire list of all icon packs from all developers present in the database
+// ---
+// produces:
+//     - application/json
+//
+// responses:
+//     "200":
+//         description: OK
+//         schema:
+//             type: object
+//             properties:
+//                 status:
+//                     type: string
+//                     description: status message
+//                     example: success
+//                 packs:
+//                     type: array
+//                     items:
+//                         "$ref": "#/definitions/Pack"
 func GetPacks(w http.ResponseWriter, r *http.Request) {
 	packs, err := packService.GetPacks()
 
