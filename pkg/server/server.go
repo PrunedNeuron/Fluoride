@@ -30,7 +30,9 @@ func New() (*Server, error) {
 	conf := config.GetConfig().Server
 
 	router := chi.NewRouter()
+
 	router.Use(Helmet())
+	router.Use(CORS())
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Recoverer)
