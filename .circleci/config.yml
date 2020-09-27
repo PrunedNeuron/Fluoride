@@ -5,13 +5,31 @@ version: 2
 jobs:
     build:
         docker:
-            - image: cimg/base:2020.01
+            - image: circleci/golang
         steps:
             - checkout
             - setup_remote_docker: # (2)
+                  version: 19.03.12
                   docker_layer_caching: true # (3)
+
+            - restore_cache:
+                  keys:
+                      - go-mod-v1-{{ checksum "go.sum" }}
+            - run:
+                  name: Download go dependencies
+                  command: |
+                      make dependencies
+            - save_cache:
+                  key: go-mod-v1-{{ checksum "go.sum" }}
+                  paths:
+                      - "/go/pkg/mod"
+            - run:
+                  name: Build binary
+                  command: |
+                      make
+
             - run:
                   name: Build using docker compose
                   command: |
                       set -x
-                      docker-compose build
+                      COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build

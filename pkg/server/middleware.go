@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/unrolled/secure"
 )
 
@@ -31,4 +32,18 @@ func Helmet() func(http.Handler) http.Handler {
 // Compression provides gzip compression
 func Compression() func(http.Handler) http.Handler {
 	return middleware.NewCompressor(flate.DefaultCompression).Handler
+}
+
+// CORS provides the cors middleware
+func CORS() func(http.Handler) http.Handler {
+	return cors.Handler(cors.Options{
+		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
+		AllowedOrigins: []string{"*"},
+		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	})
 }

@@ -1,18 +1,17 @@
 version: "3.6"
 services:
-    db:
+    postgres:
         container_name: postgres
         build:
             context: .
-            dockerfile: docker/db/Dockerfile
+            dockerfile: docker/postgres/Dockerfile
         restart: on-failure
         environment:
             POSTGRES_DB: fluoride_dev
             POSTGRES_USER: ayush
             POSTGRES_PASSWORD: ayush
-
         volumes:
-            - database-data:/var/lib/postgresql/data/
+            - pgdata:/var/lib/postgresql/data/
         ports:
             - 5432:5432
         networks:
@@ -24,6 +23,8 @@ services:
             context: .
             dockerfile: docker/server/Dockerfile
         restart: on-failure
+        volumes:
+            - gocache:/go/pkg/mod/cache
         environment:
             APPLICATION_ENV: development
 
@@ -34,19 +35,21 @@ services:
             DATABASE_SSL: disable
 
             PROFILER_HOST: 0.0.0.0
-            PROFILER_PORT: 3002
+            PROFILER_PORT: 3001
 
             SERVER_HOST: 0.0.0.0
             SERVER_PORT: 3000
         ports:
             - 3000:3000
         depends_on:
-            - db
+            - postgres
         networks:
             - backend
 
 volumes:
-    database-data:
+    pgdata:
+        driver: local
+    gocache:
         driver: local
 
 networks:

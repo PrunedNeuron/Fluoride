@@ -3,6 +3,7 @@ name: Continuous Integration
 on:
     push:
         branches:
+            - master
             - development
 
 jobs:
@@ -13,4 +14,4 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
             - name: Build
-              run: docker-compose build
+              run: COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose build
