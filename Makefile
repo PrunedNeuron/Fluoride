@@ -12,12 +12,12 @@ default: build
 .PHONY: swagger-gen
 ## swagger-gen: generates swagger docs
 swagger-gen:
-	swagger generate spec -m -o docs/swagger/swagger.yaml
+	swagger generate spec -m -o docs/openapi/swagger.yaml
 
 .PHONY: swagger-serve
-## swagger-serve: serves swagger docs
+## swagger-serve: serves swagger docs with redoc flavor
 swagger-serve: swagger-gen
-	swagger serve -F=swagger docs/swagger/swagger.yaml
+	swagger serve -F=redoc docs/openapi/swagger.yaml
 
 .PHONY: dependencies
 ## dependencies: download dependencies
