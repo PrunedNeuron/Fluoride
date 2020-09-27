@@ -18,36 +18,6 @@ definitions:
         x-go-name: PlanID
     type: object
     x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-  DevRequest:
-    description: DevRequest is the developer request body
-    properties:
-      email:
-        description: email address of the developer
-        example: jdoe@gmail.com
-        type: string
-        x-go-name: Email
-      name:
-        description: name of the developer
-        example: John Doe
-        type: string
-        x-go-name: Name
-      role:
-        description: status of the request
-        example: success
-        type: string
-        x-go-name: Role
-      url:
-        description: website of the developer
-        example: https://ayushm.dev
-        type: string
-        x-go-name: URL
-      username:
-        description: username of the developer
-        example: jdoe
-        type: string
-        x-go-name: Username
-    type: object
-    x-go-package: github.com/PrunedNeuron/Fluoride/docs/swagger
   Icon:
     description: Icon is the icon request type
     properties:
@@ -102,27 +72,6 @@ definitions:
         x-go-name: URL
     type: object
     x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-  IconResponse:
-    description: IconResponse is the developer response
-    properties:
-      icons:
-        description: the list of icons
-        items:
-          $ref: '#/definitions/Icon'
-        type: array
-        x-go-name: Icons
-      message:
-        description: the response message
-        example: retrieved x icons
-        type: string
-        x-go-name: Message
-      status:
-        description: the status of the request
-        example: success
-        type: string
-        x-go-name: Status
-    type: object
-    x-go-package: github.com/PrunedNeuron/Fluoride/docs/swagger
   Pack:
     description: Pack is the icon pack type
     properties:
@@ -166,47 +115,6 @@ definitions:
         x-go-name: URL
     type: object
     x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-  PackRequest:
-    description: PackRequest is the icon pack request
-    properties:
-      billing_status:
-        description: billing status of the icon pack
-        example: active
-        type: string
-        x-go-name: BillingStatus
-      developer_username:
-        description: username of the icon pack's developer
-        example: ayush
-        type: string
-        x-go-name: DevUsername
-      name:
-        description: name of the icon pack
-        example: Amphetamine
-        type: string
-        x-go-name: Name
-      url:
-        description: play store url of the icon pack
-        example: https://play.google.com/store/apps/details?id=com.trello
-        type: string
-        x-go-name: URL
-    type: object
-    x-go-package: github.com/PrunedNeuron/Fluoride/docs/swagger
-  PackResponse:
-    description: PackResponse is the icon pack response
-    properties:
-      packs:
-        description: the list of packs
-        items:
-          $ref: '#/definitions/Pack'
-        type: array
-        x-go-name: Packs
-      status:
-        description: the status of the request
-        example: success
-        type: string
-        x-go-name: Status
-    type: object
-    x-go-package: github.com/PrunedNeuron/Fluoride/docs/swagger
   Plan:
     description: Plan is the plan type
     properties:
@@ -310,11 +218,11 @@ info:
     email: am@ayushm.dev
     name: Ayush Mishra
     url: http://ayushm.dev
-  description: This is the API documentation page for the backend API used by the fluoride icon pack management service. Feel free to try hitting the endpoints using the interactive interface provided by redoc.
+  description: This is the API documentation page for the backend API used by the fluoride icon pack management service. Feel free to try hitting the endpoints using the interactive interface.
   license:
     name: GPL 3
     url: https://opensource.org/licenses/gpl-3.0
-  title: Fluoride, a robust icon pack management service.
+  title: Fluoride, a robust icon pack management service
   version: 0.0.1
 paths:
   /developers:
@@ -342,6 +250,7 @@ paths:
     post:
       consumes:
       - application/json
+      description: Saves a new developer to the database, rejecting the request on conflict
       operationId: SaveDev
       parameters:
       - description: information about the new developer
@@ -349,7 +258,28 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/DevRequest'
+          properties:
+            email:
+              description: email address of the developer
+              example: am@ayushm.dev
+              type: string
+            name:
+              description: name of the developer
+              example: Ayush Mishra
+              type: string
+            role:
+              description: role of the user (developer | admin)
+              example: developer
+              type: string
+            url:
+              description: developer website URL
+              example: https://ayushm.dev
+              type: string
+            username:
+              description: username of the developer
+              example: ayush
+              type: string
+          type: object
       produces:
       - application/json
       responses:
@@ -383,11 +313,14 @@ paths:
                 example: failure
                 type: string
             type: object
-      summary: Adds the given developer to the database.
+      security:
+      - api_key: []
+      summary: Add a developer
       tags:
       - Users
   /developers/{developer}:
     get:
+      description: Fetches the developer with the provided username
       operationId: GetDevByUsername
       parameters:
       - description: developer username
@@ -411,14 +344,32 @@ paths:
                 example: success
                 type: string
             type: object
-      summary: Gets the developer with the given username.
+        "500":
+          description: bad request
+          schema:
+            properties:
+              error:
+                description: error message
+                example: invalid dev
+                type: string
+              message:
+                description: informational message
+                example: server error
+                type: string
+              status:
+                description: status message
+                example: failure
+                type: string
+            type: object
+      summary: Get a developer by username
       tags:
       - Users
   /developers/{developer}/packs:
     post:
       consumes:
       - application/json
-      operationId: SavePack
+      description: Creates a new icon pack and adds it to the database; rejects the request on conflict
+      operationId: CreatePack
       parameters:
       - description: username of the developer who owns the icon pack
         in: path
@@ -430,7 +381,24 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/PackRequest'
+          properties:
+            billing_status:
+              description: billing status (active | inactive)
+              example: active
+              type: string
+            developer_username:
+              description: name of icon pack developer
+              example: ayush
+              type: string
+            name:
+              description: name of icon pack
+              example: Amphetamine
+              type: string
+            url:
+              description: play store URL
+              example: https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine
+              type: string
+          type: object
       produces:
       - application/json
       responses:
@@ -438,12 +406,14 @@ paths:
           description: OK
         "500":
           description: server error
-      summary: Adds the given icon pack to the database.
+      security:
+      - api_key: []
+      summary: Add an icon pack
       tags:
       - IconPacks
   /developers/count:
     get:
-      description: Gets the number of developers in the database
+      description: Fetches the total count of developers in the database
       operationId: GetDevCount
       produces:
       - application/json
@@ -459,10 +429,12 @@ paths:
                 description: status message
                 type: string
             type: object
+      summary: Get the total number of developers
       tags:
       - Users
   /icons:
     get:
+      description: Fetches the entire list of all icon requests belonging to all icon packs
       operationId: GetIcons
       produces:
       - application/json
@@ -470,14 +442,26 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/IconResponse'
-            type: array
-      summary: Gets the list of all the icon requests present in the database.
+            properties:
+              icons:
+                items:
+                  $ref: '#/definitions/Icon'
+                type: array
+              message:
+                description: informational message
+                example: retrieved 146 icons
+                type: string
+              status:
+                description: status message
+                example: success
+                type: string
+            type: object
+      summary: Get the list of all icon requests
       tags:
       - IconRequests
   /packs:
     get:
+      description: Fetches the entire list of all icon packs from all developers present in the database
       operationId: GetPacks
       produces:
       - application/json
@@ -485,10 +469,17 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/PackResponse'
-            type: array
-      summary: Gets the list of all the icon packs present in the database.
+            properties:
+              packs:
+                items:
+                  $ref: '#/definitions/Pack'
+                type: array
+              status:
+                description: status message
+                example: success
+                type: string
+            type: object
+      summary: Get the list of all icon packs
       tags:
       - IconPacks
 produces:
@@ -496,8 +487,6 @@ produces:
 schemes:
 - http
 - https
-security:
-- api_key: []
 securityDefinitions:
   api_key:
     in: header

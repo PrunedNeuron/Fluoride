@@ -14,7 +14,7 @@ func iconRouter() chi.Router {
 
 	router.Get("/", controller.GetIconsByPackByDev)
 	router.Post("/", controller.SaveIcons)
-	router.Get("/{component}", controller.GetIconByComponentByPackByDev)
+	router.Get("/component/{component}", controller.GetIconByComponentByPackByDev)
 	router.Get("/pending", controller.GetPendingIconsByPackByDev)
 	router.Get("/done", controller.GetDoneIconsByPackByDev)
 	router.Put("/status", controller.UpdateIconStatus)
