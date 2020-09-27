@@ -1,25 +1,21 @@
-// Fluoride, a robust icon pack management service.
+// Fluoride, a robust icon pack management service
 //
-// This is the API documentation page for the backend API used by the fluoride icon pack management service. Feel free to try hitting the endpoints using the interactive interface provided by redoc.
+// This is the API documentation page for the backend API used by the fluoride icon pack management service. Feel free to try hitting the endpoints using the interactive interface.
 //
-// Terms Of Service: there are no TOS at this moment, use at your own risk we take no responsibility
-//     Schemes: http, https
-//     Host: localhost:3000
-//     BasePath:
-//     Version: 0.0.1
-//     License: GPL 3 https://opensource.org/licenses/gpl-3.0
-//     Contact: Ayush Mishra<am@ayushm.dev> http://ayushm.dev
+//     schemes: http, https
+//     host: localhost:3000
+//     basePath:
+//     version: 0.0.1
+//     license: GPL 3 https://opensource.org/licenses/gpl-3.0
+//     contact: Ayush Mishra<am@ayushm.dev> http://ayushm.dev
 //
-//     Consumes:
+//     consumes:
 //     - application/json
 //
-//     Produces:
+//     produces:
 //     - application/json
 //
-//     Security:
-//     - api_key:
-//
-//     SecurityDefinitions:
+//     securityDefinitions:
 //         api_key:
 //            type: apiKey
 //            name: X-API-KEY
