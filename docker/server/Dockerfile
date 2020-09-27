@@ -1,16 +1,13 @@
-ARG TARGETOS=linux
-ARG TARGETARCH=amd64
-
 FROM golang:alpine AS builder
-RUN apk update && apk upgrade && \
-	apk add make
+RUN apk add make
 
 WORKDIR /go/src/github.com/PrunedNeuron/Fluoride/
 
 COPY go.mod .
 COPY go.mod .
 
-RUN go mod download
+RUN go mod download && \
+	go mod verify
 
 COPY . .
 
