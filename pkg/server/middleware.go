@@ -4,6 +4,7 @@ import (
 	"compress/flate"
 	"net/http"
 
+	"github.com/PrunedNeuron/Fluoride/pkg/docs/redoc"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/unrolled/secure"
@@ -46,4 +47,9 @@ func CORS() func(http.Handler) http.Handler {
 		AllowCredentials: false,
 		MaxAge:           300,
 	})
+}
+
+// Redoc provides the ui for the api documentation
+func Redoc(handler http.Handler) http.Handler {
+	return redoc.New(handler)
 }
