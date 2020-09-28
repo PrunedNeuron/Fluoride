@@ -38,6 +38,7 @@ func New() (*Server, error) {
 	router.Use(middleware.Recoverer)
 	router.Use(Compression())
 	router.Use(render.SetContentType(render.ContentTypeJSON))
+	router.Use(Redoc) // For API documentation
 
 	router.Use(logger.DefaultHTTPLogger(
 		conf.LogRequestsBody,
