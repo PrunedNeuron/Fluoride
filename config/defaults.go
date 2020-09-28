@@ -52,4 +52,11 @@ func SetDefaults() {
 	viper.SetDefault("storage.retries", 5)
 	viper.SetDefault("storage.sleep_between_retries", "5s")
 	viper.SetDefault("storage.max_connections", 80)
+
+	// Documentation settings
+	viper.SetDefault("documentation.title", "API documentation")
+	viper.SetDefault("documentation.base_path", "")
+	viper.SetDefault("documentation.path", "/docs")
+	viper.SetDefault("documentation.spec_url", "/swagger.json")
+	viper.SetDefault("documentation.redoc_url", "https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js")
 }
