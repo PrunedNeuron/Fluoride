@@ -9,15 +9,24 @@ DOCKER_ENV?=$(shell env | grep "DOCKER")
 
 default: build
 
-.PHONY: swagger-gen
-## swagger-gen: generates swagger docs
-swagger-gen:
-	swagger generate spec -m -o docs/openapi/swagger.yaml
+.PHONY: docs
+## docs: generates OpenAPI 2.0 docs and API Blueprint equivalents
+docs:
+	@echo "Generating OpenAPI 2.0 spec"
+	@swagger generate spec -m -o docs/openapi/oas-2.yaml
+	@echo "Enriching OpenAPI 2.0 spec with code snippets"
+	@openapi-snippet docs/openapi/oas-2.yaml -o docs/openapi/oas-2.yaml -t c -t csharp -t go -t java -t javascript -t node -t php -t python -t ruby -t shell -t swift
+	@echo "Generating OpenAPI 3.0 spec from OpenAPI 2.0 spec"
+	@api-spec-converter --from=swagger_2 --to=openapi_3 --syntax=yaml docs/openapi/oas-2.yaml > docs/openapi/oas-3.yaml
+	@echo "Generating API Blueprint from generated OpenAPI 2.0 spec"
+	@fury --format text/vnd.apiblueprint docs/openapi/oas-2.yaml docs/apib/api.apib
+	
 
-.PHONY: swagger-serve
-## swagger-serve: serves swagger docs with redoc flavor
-swagger-serve: swagger-gen
-	swagger serve -F=redoc docs/openapi/swagger.yaml
+
+.PHONY: docs-serve
+## docs-serve: serves swagger docs with redoc flavor
+docs-serve: docs
+	swagger serve -F=redoc docs/openapi/oas-2.yaml
 
 .PHONY: dependencies
 ## dependencies: download dependencies
