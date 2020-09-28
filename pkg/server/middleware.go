@@ -26,7 +26,7 @@ func Helmet() func(http.Handler) http.Handler {
 		ContentTypeNosniff:    true,
 		BrowserXssFilter:      true,
 		ReferrerPolicy:        "same-origin",
-		ContentSecurityPolicy: "script-src $NONCE",
+		// ContentSecurityPolicy: "script-src $NONCE",
 	}).Handler
 }
 
