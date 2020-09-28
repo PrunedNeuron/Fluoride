@@ -53,3 +53,8 @@ database:
     retries: 5
     sleep_between_retries: 5s
     max_connections: 80
+
+documentation:
+    title: Fluoride API Docs
+    path: /docs
+    spec_url: /openapi/oas-3.yaml
