@@ -13,7 +13,11 @@ if [[ "$1" =~ "docker" || "$1" =~ "compose" ]]; then
 	export DOCKER_BUILDKIT=1
 fi
 
-# set target os and arch
-echo -e "\e[33m$(date +"%c")\t\e[39mSetting OS and ARCH env variables using the \e[92m\`go env\`\e[39m command"
-export TARGETOS=$(go env GOOS)
-export TARGETARCH=$(go env GOARCH)
+case "$1" in
+"serve" | "run" | "build")
+	# set target os and arch for go binary build
+	echo -e "\e[33m$(date +"%c")\t\e[39mSetting OS and ARCH env variables using the \e[92m\`go env\`\e[39m command"
+	export TARGETOS=$(go env GOOS)
+	export TARGETARCH=$(go env GOARCH)
+	;;
+esac
