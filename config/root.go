@@ -12,11 +12,12 @@ import (
 
 // Configuration is the primary configuration model
 type Configuration struct {
-	Application ApplicationConfiguration `json:"application" yaml:"application" mapstructure:"application"`
-	Profiler    ProfilerConfiguration    `json:"profiler" yaml:"profiler" mapstructure:"profiler"`
-	Logger      LoggerConfiguration      `json:"logger" yaml:"logger" mapstructure:"logger"`
-	Server      ServerConfiguration      `json:"server" yaml:"server" mapstructure:"server"`
-	Database    DatabaseConfiguration    `json:"database" yaml:"database" mapstructure:"database"`
+	Application   ApplicationConfiguration   `json:"application" yaml:"application" mapstructure:"application"`
+	Profiler      ProfilerConfiguration      `json:"profiler" yaml:"profiler" mapstructure:"profiler"`
+	Logger        LoggerConfiguration        `json:"logger" yaml:"logger" mapstructure:"logger"`
+	Server        ServerConfiguration        `json:"server" yaml:"server" mapstructure:"server"`
+	Database      DatabaseConfiguration      `json:"database" yaml:"database" mapstructure:"database"`
+	Documentation DocumentationConfiguration `json:"documentation" yaml:"documentation" mapstructure:"documentation"`
 }
 
 var (
