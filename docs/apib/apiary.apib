@@ -1,0 +1,1000 @@
+FORMAT: 1A
+HOST: http://localhost:3000
+
+# Fluoride, a robust icon pack management service
+
+This is the API documentation page for the backend API used by the fluoride icon pack management service. Feel free to try hitting the endpoints using the interactive interface.
+
+## Group Users
+
+### /developers
+
+#### Gets the list of all the developers present in the database. [GET]
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    OK
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "developers": [
+                {
+                  "created_at": "2020-09-16T21:37:13.418Z",
+                  "email": "jdoe@gmail.com",
+                  "id": 24,
+                  "name": "John Doe",
+                  "role": "developer",
+                  "updated_at": "2020-09-16T21:37:13.418Z",
+                  "url": "https://jdoe.co",
+                  "username": "jdoe"
+                }
+              ],
+              "status": "success"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "developers": {
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  },
+                  "type": "array"
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "success"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "definitions": {
+                "User": {
+                  "description": "User is the generic user type",
+                  "properties": {
+                    "created_at": {
+                      "description": "Date when the User was added",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "email": {
+                      "description": "User email",
+                      "type": "string",
+                      "examples": [
+                        "jdoe@gmail.com"
+                      ]
+                    },
+                    "id": {
+                      "description": "User ID",
+                      "format": "int64",
+                      "type": "integer",
+                      "examples": [
+                        24
+                      ]
+                    },
+                    "name": {
+                      "description": "User name",
+                      "type": "string",
+                      "examples": [
+                        "John Doe"
+                      ]
+                    },
+                    "role": {
+                      "description": "User role (admin | developer)",
+                      "type": "string",
+                      "examples": [
+                        "developer"
+                      ]
+                    },
+                    "updated_at": {
+                      "description": "Date when the User was updated",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "url": {
+                      "description": "User website",
+                      "type": "string",
+                      "examples": [
+                        "https://jdoe.co"
+                      ]
+                    },
+                    "username": {
+                      "description": "User username",
+                      "type": "string",
+                      "examples": [
+                        "jdoe"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+
+#### Add a developer [POST]
+
+Saves a new developer to the database, rejecting the request on conflict
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "email": "am@ayushm.dev",
+              "name": "Ayush Mishra",
+              "role": "developer",
+              "url": "https://ayushm.dev",
+              "username": "ayush"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "email": {
+                  "description": "email address of the developer",
+                  "type": "string",
+                  "examples": [
+                    "am@ayushm.dev"
+                  ]
+                },
+                "name": {
+                  "description": "name of the developer",
+                  "type": "string",
+                  "examples": [
+                    "Ayush Mishra"
+                  ]
+                },
+                "role": {
+                  "description": "role of the user (developer | admin)",
+                  "type": "string",
+                  "examples": [
+                    "developer"
+                  ]
+                },
+                "url": {
+                  "description": "developer website URL",
+                  "type": "string",
+                  "examples": [
+                    "https://ayushm.dev"
+                  ]
+                },
+                "username": {
+                  "description": "username of the developer",
+                  "type": "string",
+                  "examples": [
+                    "ayush"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
++ Response 200 (application/json)
+
+    OK
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "message": "successfully added developer",
+              "status": "success"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "message": {
+                  "description": "informational message",
+                  "type": "string",
+                  "examples": [
+                    "successfully added developer"
+                  ]
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "success"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "email": "am@ayushm.dev",
+              "name": "Ayush Mishra",
+              "role": "developer",
+              "url": "https://ayushm.dev",
+              "username": "ayush"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "email": {
+                  "description": "email address of the developer",
+                  "type": "string",
+                  "examples": [
+                    "am@ayushm.dev"
+                  ]
+                },
+                "name": {
+                  "description": "name of the developer",
+                  "type": "string",
+                  "examples": [
+                    "Ayush Mishra"
+                  ]
+                },
+                "role": {
+                  "description": "role of the user (developer | admin)",
+                  "type": "string",
+                  "examples": [
+                    "developer"
+                  ]
+                },
+                "url": {
+                  "description": "developer website URL",
+                  "type": "string",
+                  "examples": [
+                    "https://ayushm.dev"
+                  ]
+                },
+                "username": {
+                  "description": "username of the developer",
+                  "type": "string",
+                  "examples": [
+                    "ayush"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
++ Response 500 (application/json)
+
+    server error
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "error": "user may already exist",
+              "message": "invalid request",
+              "status": "failure"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "error": {
+                  "description": "error message",
+                  "type": "string",
+                  "examples": [
+                    "user may already exist"
+                  ]
+                },
+                "message": {
+                  "description": "informational message",
+                  "type": "string",
+                  "examples": [
+                    "invalid request"
+                  ]
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "failure"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
+### /developers/{developer}
+
+#### Get a developer by username [GET]
+
+Fetches the developer with the provided username
+
++ Parameters
+
+    + developer (required) - developer username
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    OK
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "developers": [
+                {
+                  "created_at": "2020-09-16T21:37:13.418Z",
+                  "email": "jdoe@gmail.com",
+                  "id": 24,
+                  "name": "John Doe",
+                  "role": "developer",
+                  "updated_at": "2020-09-16T21:37:13.418Z",
+                  "url": "https://jdoe.co",
+                  "username": "jdoe"
+                }
+              ],
+              "status": "success"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "developers": {
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  },
+                  "type": "array"
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "success"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "definitions": {
+                "User": {
+                  "description": "User is the generic user type",
+                  "properties": {
+                    "created_at": {
+                      "description": "Date when the User was added",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "email": {
+                      "description": "User email",
+                      "type": "string",
+                      "examples": [
+                        "jdoe@gmail.com"
+                      ]
+                    },
+                    "id": {
+                      "description": "User ID",
+                      "format": "int64",
+                      "type": "integer",
+                      "examples": [
+                        24
+                      ]
+                    },
+                    "name": {
+                      "description": "User name",
+                      "type": "string",
+                      "examples": [
+                        "John Doe"
+                      ]
+                    },
+                    "role": {
+                      "description": "User role (admin | developer)",
+                      "type": "string",
+                      "examples": [
+                        "developer"
+                      ]
+                    },
+                    "updated_at": {
+                      "description": "Date when the User was updated",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "url": {
+                      "description": "User website",
+                      "type": "string",
+                      "examples": [
+                        "https://jdoe.co"
+                      ]
+                    },
+                    "username": {
+                      "description": "User username",
+                      "type": "string",
+                      "examples": [
+                        "jdoe"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
++ Response 500 (application/json)
+
+    bad request
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "error": "invalid dev",
+              "message": "server error",
+              "status": "failure"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "error": {
+                  "description": "error message",
+                  "type": "string",
+                  "examples": [
+                    "invalid dev"
+                  ]
+                },
+                "message": {
+                  "description": "informational message",
+                  "type": "string",
+                  "examples": [
+                    "server error"
+                  ]
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "failure"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
+### /developers/count
+
+#### Get the total number of developers [GET]
+
+Fetches the total count of developers in the database
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    OK
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "count": -100000000,
+              "status": ""
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "count": {
+                  "description": "number of developers",
+                  "type": "integer"
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
+## Group IconPacks
+
+### /developers/{developer}/packs
+
+#### Add an icon pack [POST]
+
+Creates a new icon pack and adds it to the database; rejects the request on conflict
+
++ Parameters
+
+    + developer (required) - username of the developer who owns the icon pack
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "billing_status": "active",
+              "developer_username": "ayush",
+              "name": "Amphetamine",
+              "url": "https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "billing_status": {
+                  "description": "billing status (active | inactive)",
+                  "type": "string",
+                  "examples": [
+                    "active"
+                  ]
+                },
+                "developer_username": {
+                  "description": "name of icon pack developer",
+                  "type": "string",
+                  "examples": [
+                    "ayush"
+                  ]
+                },
+                "name": {
+                  "description": "name of icon pack",
+                  "type": "string",
+                  "examples": [
+                    "Amphetamine"
+                  ]
+                },
+                "url": {
+                  "description": "play store URL",
+                  "type": "string",
+                  "examples": [
+                    "https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
++ Response 200 (application/json)
+
+        OK
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "billing_status": "active",
+              "developer_username": "ayush",
+              "name": "Amphetamine",
+              "url": "https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "billing_status": {
+                  "description": "billing status (active | inactive)",
+                  "type": "string",
+                  "examples": [
+                    "active"
+                  ]
+                },
+                "developer_username": {
+                  "description": "name of icon pack developer",
+                  "type": "string",
+                  "examples": [
+                    "ayush"
+                  ]
+                },
+                "name": {
+                  "description": "name of icon pack",
+                  "type": "string",
+                  "examples": [
+                    "Amphetamine"
+                  ]
+                },
+                "url": {
+                  "description": "play store URL",
+                  "type": "string",
+                  "examples": [
+                    "https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+
++ Response 500 (application/json)
+
+        server error
+
+### /packs
+
+#### Get the list of all icon packs [GET]
+
+Fetches the entire list of all icon packs from all developers present in the database
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    OK
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "packs": [
+                {
+                  "billing_status": "billed",
+                  "created_at": "2020-09-16T21:37:13.418Z",
+                  "developer_username": "jdoe",
+                  "id": 2,
+                  "name": "Valacons",
+                  "updated_at": "2020-09-16T21:37:13.418Z",
+                  "url": "https://play.google.com"
+                }
+              ],
+              "status": "success"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "packs": {
+                  "items": {
+                    "$ref": "#/definitions/Pack"
+                  },
+                  "type": "array"
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "success"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "definitions": {
+                "Pack": {
+                  "description": "Pack is the icon pack type",
+                  "properties": {
+                    "billing_status": {
+                      "description": "Billing status",
+                      "type": "string",
+                      "examples": [
+                        "billed"
+                      ]
+                    },
+                    "created_at": {
+                      "description": "Date when the pack was added",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "developer_username": {
+                      "description": "Icon pack developer username",
+                      "type": "string",
+                      "examples": [
+                        "jdoe"
+                      ]
+                    },
+                    "id": {
+                      "description": "Icon pack ID",
+                      "format": "int64",
+                      "type": "integer",
+                      "examples": [
+                        2
+                      ]
+                    },
+                    "name": {
+                      "description": "Icon pack name",
+                      "type": "string",
+                      "examples": [
+                        "Valacons"
+                      ]
+                    },
+                    "updated_at": {
+                      "description": "Date when the pack was updated",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "url": {
+                      "description": "Icon pack url (play store)",
+                      "type": "string",
+                      "examples": [
+                        "https://play.google.com"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+
+## Group IconRequests
+
+### /icons
+
+#### Get the list of all icon requests [GET]
+
+Fetches the entire list of all icon requests belonging to all icon packs
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    OK
+
+    + Attributes (optional)
+
+    + Body
+
+            {
+              "icons": [
+                {
+                  "component": "com.canva.editor/com.canva.app.editor.splash.SplashActivity",
+                  "created_at": "2020-09-16T21:37:13.418Z",
+                  "id": 51,
+                  "name": "Canva",
+                  "pack": "Valacons",
+                  "requesters": 28,
+                  "status": "pending",
+                  "updated_at": "2020-09-16T21:37:13.418Z",
+                  "url": "https://play.google.com/store/apps/details?id=com.canva.editor"
+                }
+              ],
+              "message": "retrieved 146 icons",
+              "status": "success"
+            }
+
+    + Schema
+
+            {
+              "properties": {
+                "icons": {
+                  "items": {
+                    "$ref": "#/definitions/Icon"
+                  },
+                  "type": "array"
+                },
+                "message": {
+                  "description": "informational message",
+                  "type": "string",
+                  "examples": [
+                    "retrieved 146 icons"
+                  ]
+                },
+                "status": {
+                  "description": "status message",
+                  "type": "string",
+                  "examples": [
+                    "success"
+                  ]
+                }
+              },
+              "type": "object",
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "definitions": {
+                "Icon": {
+                  "description": "Icon is the icon request type",
+                  "properties": {
+                    "component": {
+                      "description": "App component",
+                      "type": "string",
+                      "examples": [
+                        "com.canva.editor/com.canva.app.editor.splash.SplashActivity"
+                      ]
+                    },
+                    "created_at": {
+                      "description": "Date created at",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "id": {
+                      "description": "Icon request ID",
+                      "format": "int64",
+                      "type": "integer",
+                      "examples": [
+                        51
+                      ]
+                    },
+                    "name": {
+                      "description": "App name",
+                      "type": "string",
+                      "examples": [
+                        "Canva"
+                      ]
+                    },
+                    "pack": {
+                      "description": "Name of the  Icon pack it belongs to",
+                      "type": "string",
+                      "examples": [
+                        "Valacons"
+                      ]
+                    },
+                    "requesters": {
+                      "description": "Number of requesters",
+                      "format": "int64",
+                      "type": "integer",
+                      "examples": [
+                        28
+                      ]
+                    },
+                    "status": {
+                      "description": "Status of request (pending / complete)",
+                      "type": "string",
+                      "examples": [
+                        "pending"
+                      ]
+                    },
+                    "updated_at": {
+                      "description": "Date updated at",
+                      "format": "date-time",
+                      "type": "string",
+                      "examples": [
+                        "2020-09-17T03:07:13.418204+05:30"
+                      ]
+                    },
+                    "url": {
+                      "description": "Play Store URL (may be autogenerated)",
+                      "type": "string",
+                      "examples": [
+                        "https://play.google.com/store/apps/details?id=com.canva.editor"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+
+## Data Structures
+
+### `definitions/Billing` - Billing is the junction type of User and Plan
+
++ dev_id: 3 (number, optional)
++ plan_id: 1 (number, optional)
+
+### `definitions/Icon` - Icon is the icon request type
+
++ component: com.canva.editor/com.canva.app.editor.splash.SplashActivity (optional)
++ created_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ id: 51 (number, optional)
++ name: Canva (optional)
++ pack: Valacons (optional)
++ requesters: 28 (number, optional)
++ status: pending (optional)
++ updated_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ url: https://play.google.com/store/apps/details?id=com.canva.editor (optional)
+
+### `definitions/Pack` - Pack is the icon pack type
+
++ billing_status: billed (optional)
++ created_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ developer_username: jdoe (optional)
++ id: 2 (number, optional)
++ name: Valacons (optional)
++ updated_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ url: https://play.google.com (optional)
+
+### `definitions/Plan` - Plan is the plan type
+
++ billing_cycle: 30 (number, optional)
++ created_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ description: Best suited for experienced icon pack devs. (optional)
++ id: 5 (number, optional)
++ intro: Pro (optional)
++ name: John Doe (optional)
++ price: $1.99 (optional)
++ updated_at: 2020-09-17T03:07:13.418204+05:30 (optional)
+
+### `definitions/User` - User is the generic user type
+
++ created_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ email: jdoe@gmail.com (optional)
++ id: 24 (number, optional)
++ name: John Doe (optional)
++ role: developer (optional)
++ updated_at: 2020-09-17T03:07:13.418204+05:30 (optional)
++ url: https://jdoe.co (optional)
++ username: jdoe (optional)

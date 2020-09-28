@@ -47,7 +47,69 @@ This is the API documentation page for the backend API used by the fluoride icon
               "properties": {
                 "developers": {
                   "items": {
-                    "$ref": "#/definitions/User"
+                    "description": "User is the generic user type",
+                    "properties": {
+                      "created_at": {
+                        "description": "Date when the User was added",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "examples": [
+                          "jdoe@gmail.com"
+                        ]
+                      },
+                      "id": {
+                        "description": "User ID",
+                        "format": "int64",
+                        "type": "integer",
+                        "examples": [
+                          24
+                        ]
+                      },
+                      "name": {
+                        "description": "User name",
+                        "type": "string",
+                        "examples": [
+                          "John Doe"
+                        ]
+                      },
+                      "role": {
+                        "description": "User role (admin | developer)",
+                        "type": "string",
+                        "examples": [
+                          "developer"
+                        ]
+                      },
+                      "updated_at": {
+                        "description": "Date when the User was updated",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "url": {
+                        "description": "User website",
+                        "type": "string",
+                        "examples": [
+                          "https://jdoe.co"
+                        ]
+                      },
+                      "username": {
+                        "description": "User username",
+                        "type": "string",
+                        "examples": [
+                          "jdoe"
+                        ]
+                      }
+                    },
+                    "type": "object"
                   },
                   "type": "array"
                 },
@@ -60,74 +122,7 @@ This is the API documentation page for the backend API used by the fluoride icon
                 }
               },
               "type": "object",
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "definitions": {
-                "User": {
-                  "description": "User is the generic user type",
-                  "properties": {
-                    "created_at": {
-                      "description": "Date when the User was added",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "email": {
-                      "description": "User email",
-                      "type": "string",
-                      "examples": [
-                        "jdoe@gmail.com"
-                      ]
-                    },
-                    "id": {
-                      "description": "User ID",
-                      "format": "int64",
-                      "type": "integer",
-                      "examples": [
-                        24
-                      ]
-                    },
-                    "name": {
-                      "description": "User name",
-                      "type": "string",
-                      "examples": [
-                        "John Doe"
-                      ]
-                    },
-                    "role": {
-                      "description": "User role (admin | developer)",
-                      "type": "string",
-                      "examples": [
-                        "developer"
-                      ]
-                    },
-                    "updated_at": {
-                      "description": "Date when the User was updated",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "url": {
-                      "description": "User website",
-                      "type": "string",
-                      "examples": [
-                        "https://jdoe.co"
-                      ]
-                    },
-                    "username": {
-                      "description": "User username",
-                      "type": "string",
-                      "examples": [
-                        "jdoe"
-                      ]
-                    }
-                  },
-                  "type": "object"
-                }
-              }
+              "$schema": "http://json-schema.org/draft-04/schema#"
             }
 
 #### Add a developer [POST]
@@ -384,7 +379,69 @@ Fetches the developer with the provided username
               "properties": {
                 "developers": {
                   "items": {
-                    "$ref": "#/definitions/User"
+                    "description": "User is the generic user type",
+                    "properties": {
+                      "created_at": {
+                        "description": "Date when the User was added",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "email": {
+                        "description": "User email",
+                        "type": "string",
+                        "examples": [
+                          "jdoe@gmail.com"
+                        ]
+                      },
+                      "id": {
+                        "description": "User ID",
+                        "format": "int64",
+                        "type": "integer",
+                        "examples": [
+                          24
+                        ]
+                      },
+                      "name": {
+                        "description": "User name",
+                        "type": "string",
+                        "examples": [
+                          "John Doe"
+                        ]
+                      },
+                      "role": {
+                        "description": "User role (admin | developer)",
+                        "type": "string",
+                        "examples": [
+                          "developer"
+                        ]
+                      },
+                      "updated_at": {
+                        "description": "Date when the User was updated",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "url": {
+                        "description": "User website",
+                        "type": "string",
+                        "examples": [
+                          "https://jdoe.co"
+                        ]
+                      },
+                      "username": {
+                        "description": "User username",
+                        "type": "string",
+                        "examples": [
+                          "jdoe"
+                        ]
+                      }
+                    },
+                    "type": "object"
                   },
                   "type": "array"
                 },
@@ -397,74 +454,7 @@ Fetches the developer with the provided username
                 }
               },
               "type": "object",
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "definitions": {
-                "User": {
-                  "description": "User is the generic user type",
-                  "properties": {
-                    "created_at": {
-                      "description": "Date when the User was added",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "email": {
-                      "description": "User email",
-                      "type": "string",
-                      "examples": [
-                        "jdoe@gmail.com"
-                      ]
-                    },
-                    "id": {
-                      "description": "User ID",
-                      "format": "int64",
-                      "type": "integer",
-                      "examples": [
-                        24
-                      ]
-                    },
-                    "name": {
-                      "description": "User name",
-                      "type": "string",
-                      "examples": [
-                        "John Doe"
-                      ]
-                    },
-                    "role": {
-                      "description": "User role (admin | developer)",
-                      "type": "string",
-                      "examples": [
-                        "developer"
-                      ]
-                    },
-                    "updated_at": {
-                      "description": "Date when the User was updated",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "url": {
-                      "description": "User website",
-                      "type": "string",
-                      "examples": [
-                        "https://jdoe.co"
-                      ]
-                    },
-                    "username": {
-                      "description": "User username",
-                      "type": "string",
-                      "examples": [
-                        "jdoe"
-                      ]
-                    }
-                  },
-                  "type": "object"
-                }
-              }
+              "$schema": "http://json-schema.org/draft-04/schema#"
             }
 
 + Request (application/json)
@@ -728,7 +718,62 @@ Fetches the entire list of all icon packs from all developers present in the dat
               "properties": {
                 "packs": {
                   "items": {
-                    "$ref": "#/definitions/Pack"
+                    "description": "Pack is the icon pack type",
+                    "properties": {
+                      "billing_status": {
+                        "description": "Billing status",
+                        "type": "string",
+                        "examples": [
+                          "billed"
+                        ]
+                      },
+                      "created_at": {
+                        "description": "Date when the pack was added",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "developer_username": {
+                        "description": "Icon pack developer username",
+                        "type": "string",
+                        "examples": [
+                          "jdoe"
+                        ]
+                      },
+                      "id": {
+                        "description": "Icon pack ID",
+                        "format": "int64",
+                        "type": "integer",
+                        "examples": [
+                          2
+                        ]
+                      },
+                      "name": {
+                        "description": "Icon pack name",
+                        "type": "string",
+                        "examples": [
+                          "Valacons"
+                        ]
+                      },
+                      "updated_at": {
+                        "description": "Date when the pack was updated",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "url": {
+                        "description": "Icon pack url (play store)",
+                        "type": "string",
+                        "examples": [
+                          "https://play.google.com"
+                        ]
+                      }
+                    },
+                    "type": "object"
                   },
                   "type": "array"
                 },
@@ -741,67 +786,7 @@ Fetches the entire list of all icon packs from all developers present in the dat
                 }
               },
               "type": "object",
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "definitions": {
-                "Pack": {
-                  "description": "Pack is the icon pack type",
-                  "properties": {
-                    "billing_status": {
-                      "description": "Billing status",
-                      "type": "string",
-                      "examples": [
-                        "billed"
-                      ]
-                    },
-                    "created_at": {
-                      "description": "Date when the pack was added",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "developer_username": {
-                      "description": "Icon pack developer username",
-                      "type": "string",
-                      "examples": [
-                        "jdoe"
-                      ]
-                    },
-                    "id": {
-                      "description": "Icon pack ID",
-                      "format": "int64",
-                      "type": "integer",
-                      "examples": [
-                        2
-                      ]
-                    },
-                    "name": {
-                      "description": "Icon pack name",
-                      "type": "string",
-                      "examples": [
-                        "Valacons"
-                      ]
-                    },
-                    "updated_at": {
-                      "description": "Date when the pack was updated",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "url": {
-                      "description": "Icon pack url (play store)",
-                      "type": "string",
-                      "examples": [
-                        "https://play.google.com"
-                      ]
-                    }
-                  },
-                  "type": "object"
-                }
-              }
+              "$schema": "http://json-schema.org/draft-04/schema#"
             }
 
 ## Group IconRequests
@@ -850,7 +835,77 @@ Fetches the entire list of all icon requests belonging to all icon packs
               "properties": {
                 "icons": {
                   "items": {
-                    "$ref": "#/definitions/Icon"
+                    "description": "Icon is the icon request type",
+                    "properties": {
+                      "component": {
+                        "description": "App component",
+                        "type": "string",
+                        "examples": [
+                          "com.canva.editor/com.canva.app.editor.splash.SplashActivity"
+                        ]
+                      },
+                      "created_at": {
+                        "description": "Date created at",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "id": {
+                        "description": "Icon request ID",
+                        "format": "int64",
+                        "type": "integer",
+                        "examples": [
+                          51
+                        ]
+                      },
+                      "name": {
+                        "description": "App name",
+                        "type": "string",
+                        "examples": [
+                          "Canva"
+                        ]
+                      },
+                      "pack": {
+                        "description": "Name of the  Icon pack it belongs to",
+                        "type": "string",
+                        "examples": [
+                          "Valacons"
+                        ]
+                      },
+                      "requesters": {
+                        "description": "Number of requesters",
+                        "format": "int64",
+                        "type": "integer",
+                        "examples": [
+                          28
+                        ]
+                      },
+                      "status": {
+                        "description": "Status of request (pending / complete)",
+                        "type": "string",
+                        "examples": [
+                          "pending"
+                        ]
+                      },
+                      "updated_at": {
+                        "description": "Date updated at",
+                        "format": "date-time",
+                        "type": "string",
+                        "examples": [
+                          "2020-09-17T03:07:13.418204+05:30"
+                        ]
+                      },
+                      "url": {
+                        "description": "Play Store URL (may be autogenerated)",
+                        "type": "string",
+                        "examples": [
+                          "https://play.google.com/store/apps/details?id=com.canva.editor"
+                        ]
+                      }
+                    },
+                    "type": "object"
                   },
                   "type": "array"
                 },
@@ -870,82 +925,7 @@ Fetches the entire list of all icon requests belonging to all icon packs
                 }
               },
               "type": "object",
-              "$schema": "http://json-schema.org/draft-04/schema#",
-              "definitions": {
-                "Icon": {
-                  "description": "Icon is the icon request type",
-                  "properties": {
-                    "component": {
-                      "description": "App component",
-                      "type": "string",
-                      "examples": [
-                        "com.canva.editor/com.canva.app.editor.splash.SplashActivity"
-                      ]
-                    },
-                    "created_at": {
-                      "description": "Date created at",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "id": {
-                      "description": "Icon request ID",
-                      "format": "int64",
-                      "type": "integer",
-                      "examples": [
-                        51
-                      ]
-                    },
-                    "name": {
-                      "description": "App name",
-                      "type": "string",
-                      "examples": [
-                        "Canva"
-                      ]
-                    },
-                    "pack": {
-                      "description": "Name of the  Icon pack it belongs to",
-                      "type": "string",
-                      "examples": [
-                        "Valacons"
-                      ]
-                    },
-                    "requesters": {
-                      "description": "Number of requesters",
-                      "format": "int64",
-                      "type": "integer",
-                      "examples": [
-                        28
-                      ]
-                    },
-                    "status": {
-                      "description": "Status of request (pending / complete)",
-                      "type": "string",
-                      "examples": [
-                        "pending"
-                      ]
-                    },
-                    "updated_at": {
-                      "description": "Date updated at",
-                      "format": "date-time",
-                      "type": "string",
-                      "examples": [
-                        "2020-09-17T03:07:13.418204+05:30"
-                      ]
-                    },
-                    "url": {
-                      "description": "Play Store URL (may be autogenerated)",
-                      "type": "string",
-                      "examples": [
-                        "https://play.google.com/store/apps/details?id=com.canva.editor"
-                      ]
-                    }
-                  },
-                  "type": "object"
-                }
-              }
+              "$schema": "http://json-schema.org/draft-04/schema#"
             }
 
 ## Data Structures
