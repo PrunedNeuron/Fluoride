@@ -11,7 +11,7 @@ RUN go mod download && \
 
 COPY . .
 
-RUN ./run build
+RUN ./make build
 
 # Build minimal image
 # Busybox has /bin/sh and is smaller than alpine
