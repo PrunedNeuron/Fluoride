@@ -1,539 +1,2154 @@
 openapi: 3.0.0
 info:
-    contact:
-        email: am@ayushm.dev
-        name: Ayush Mishra
-        url: "http://ayushm.dev"
-    description: >-
-        This is the API documentation page for the backend API used by the fluoride
-        icon pack management service. Feel free to try hitting the endpoints using
-        the interactive interface.
-    license:
-        name: GPL 3
-        url: "https://opensource.org/licenses/gpl-3.0"
-    title: "Fluoride, a robust icon pack management service"
-    version: v1-oas3
-paths:
-    /developers:
-        get:
-            description: Fetch the entire list of developers present in the database
-            operationId: GetDevs
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    developers:
-                                        items:
-                                            $ref: "#/components/schemas/User"
-                                        type: array
-                                    status:
-                                        description: status message
-                                        example: success
-                                        type: string
-                                type: object
-                "400":
-                    description: bad request
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    error:
-                                        description: error message
-                                        example: found no developers
-                                        type: string
-                                    message:
-                                        description: informational message
-                                        example: invalid request
-                                        type: string
-                                    status:
-                                        description: status message
-                                        example: failure
-                                        type: string
-                                type: object
-                "500":
-                    description: internal server error
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    error:
-                                        description: error message
-                                        example: internal server error
-                                        type: string
-                                    message:
-                                        description: informational message
-                                        example: server error
-                                        type: string
-                                    status:
-                                        description: status message
-                                        example: failure
-                                        type: string
-                                type: object
-            summary: Get a list of all developers
-            tags:
-                - Users
-        post:
-            description: "Saves a new developer to the database, rejecting the request on conflict"
-            operationId: SaveDev
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    message:
-                                        description: informational message
-                                        example: successfully added developer
-                                        type: string
-                                    status:
-                                        description: status message
-                                        example: success
-                                        type: string
-                                type: object
-                "500":
-                    description: server error
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    error:
-                                        description: error message
-                                        example: user may already exist
-                                        type: string
-                                    message:
-                                        description: informational message
-                                        example: invalid request
-                                        type: string
-                                    status:
-                                        description: status message
-                                        example: failure
-                                        type: string
-                                type: object
-            security:
-                - api_key: []
-            summary: Add a developer
-            tags:
-                - Users
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            properties:
-                                email:
-                                    description: email address of the developer
-                                    example: am@ayushm.dev
-                                    type: string
-                                name:
-                                    description: name of the developer
-                                    example: Ayush Mishra
-                                    type: string
-                                role:
-                                    description: role of the user (developer | admin)
-                                    example: developer
-                                    type: string
-                                url:
-                                    description: developer website URL
-                                    example: "https://ayushm.dev"
-                                    type: string
-                                username:
-                                    description: username of the developer
-                                    example: ayush
-                                    type: string
-                            type: object
-                description: information about the new developer
-                required: true
-    "/developers/{developer}":
-        get:
-            description: Fetches the developer with the provided username
-            operationId: GetDevByUsername
-            parameters:
-                - description: developer username
-                  in: path
-                  name: developer
-                  required: true
-                  schema:
-                      type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    developers:
-                                        items:
-                                            $ref: "#/components/schemas/User"
-                                        type: array
-                                    status:
-                                        description: status message
-                                        example: success
-                                        type: string
-                                type: object
-                "500":
-                    description: bad request
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    error:
-                                        description: error message
-                                        example: invalid dev
-                                        type: string
-                                    message:
-                                        description: informational message
-                                        example: server error
-                                        type: string
-                                    status:
-                                        description: status message
-                                        example: failure
-                                        type: string
-                                type: object
-            summary: Get a developer by username
-            tags:
-                - Users
-    "/developers/{developer}/packs":
-        post:
-            description: >-
-                Saves a new icon pack to the database and rejects the request on
-                conflict
-            operationId: SavePack
-            parameters:
-                - description: username of the developer who owns the icon pack
-                  in: path
-                  name: developer
-                  required: true
-                  schema:
-                      type: string
-            responses:
-                "200":
-                    description: OK
-                "500":
-                    description: server error
-            security:
-                - api_key: []
-            summary: Add an icon pack
-            tags:
-                - IconPacks
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            properties:
-                                billing_status:
-                                    description: billing status (active | inactive)
-                                    example: active
-                                    type: string
-                                developer_username:
-                                    description: name of icon pack developer
-                                    example: ayush
-                                    type: string
-                                name:
-                                    description: name of icon pack
-                                    example: Amphetamine
-                                    type: string
-                                url:
-                                    description: play store URL
-                                    example: >-
-                                        https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine
-                                    type: string
-                            type: object
-                description: information about the new icon pack
-                required: true
-    /developers/count:
-        get:
-            description: Fetches the total count of developers in the database
-            operationId: GetDevCount
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    count:
-                                        description: number of developers
-                                        type: integer
-                                    status:
-                                        description: status message
-                                        type: string
-                                type: object
-            summary: Get the total number of developers
-            tags:
-                - Users
-    /icons:
-        get:
-            description: Fetches the entire list of all icon requests belonging to all icon packs
-            operationId: GetIcons
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    icons:
-                                        items:
-                                            $ref: "#/components/schemas/Icon"
-                                        type: array
-                                    message:
-                                        description: informational message
-                                        example: retrieved 146 icons
-                                        type: string
-                                    status:
-                                        description: status message
-                                        example: success
-                                        type: string
-                                type: object
-            summary: Get the list of all icon requests
-            tags:
-                - IconRequests
-    /packs:
-        get:
-            description: >-
-                Fetches the entire list of all icon packs from all developers present in
-                the database
-            operationId: GetPacks
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                properties:
-                                    packs:
-                                        items:
-                                            $ref: "#/components/schemas/Pack"
-                                        type: array
-                                    status:
-                                        description: status message
-                                        example: success
-                                        type: string
-                                type: object
-            summary: Get the list of all icon packs
-            tags:
-                - IconPacks
+  contact:
+    email: am@ayushm.dev
+    name: Ayush Mishra
+    url: 'http://ayushm.dev'
+  description: >-
+    This is the API documentation page for the backend API used by the fluoride
+    icon pack management service. Feel free to try hitting the endpoints using
+    the interactive interface.
+  license:
+    name: GPL 3
+    url: 'https://opensource.org/licenses/gpl-3.0'
+  title: 'Fluoride, a robust icon pack management service'
+  version: 0.0.1
 servers:
-    - url: "http://localhost:3000/"
-    - url: "https://localhost:3000/"
-components:
-    securitySchemes:
-        api_key:
-            in: header
-            name: X-API-KEY
-            type: apiKey
-    schemas:
-        Billing:
-            description: Billing is the junction type of User and Plan
-            properties:
-                dev_id:
-                    description: ID of the associated developer
-                    example: 3
-                    format: int64
-                    type: integer
-                    x-go-name: DevID
-                plan_id:
-                    description: ID of the plan being billed
-                    example: 1
-                    format: int64
-                    type: integer
-                    x-go-name: PlanID
-            type: object
-            x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-        Icon:
-            description: Icon is the icon request type
-            properties:
-                component:
-                    description: App component
-                    example: com.canva.editor/com.canva.app.editor.splash.SplashActivity
+  - url: 'http://localhost:3000/'
+  - url: 'https://localhost:3000/'
+paths:
+  /developers:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  developers:
+                    items:
+                      description: User is the generic user type
+                      properties:
+                        created_at:
+                          description: Date when the User was added
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: CreatedAt
+                        email:
+                          description: User email
+                          example: jdoe@gmail.com
+                          type: string
+                          x-go-name: Email
+                        id:
+                          description: User ID
+                          example: 24
+                          format: int64
+                          type: integer
+                          x-go-name: ID
+                        name:
+                          description: User name
+                          example: John Doe
+                          type: string
+                          x-go-name: Name
+                        role:
+                          description: User role (admin | developer)
+                          example: developer
+                          type: string
+                          x-go-name: Role
+                        updated_at:
+                          description: Date when the User was updated
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: UpdatedAt
+                        url:
+                          description: User website
+                          example: 'https://jdoe.co'
+                          type: string
+                          x-go-name: URL
+                        username:
+                          description: User username
+                          example: jdoe
+                          type: string
+                          x-go-name: Username
+                      type: object
+                      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+                    type: array
+                  status:
+                    description: status message
+                    example: success
                     type: string
-                    x-go-name: Component
-                created_at:
-                    description: Date created at
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
+                type: object
+          description: OK
+      tags:
+        - Users
+      operationId: GetDevs
+      summary: Gets the list of all the developers present in the database.
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/developers");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/developers");
+
+            var request = new RestRequest(Method.GET);
+
+            request.AddHeader("content-type", "application/json");
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/developers\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"content-type\", \"application/json\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: |-
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/developers")
+              .get()
+              .addHeader("content-type", "application/json")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/developers",
+              "method": "GET",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "GET",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/developers",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/developers",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "GET",
+              CURLOPT_HTTPHEADER => [
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: |-
+            import http.client
+
+            conn = http.client.HTTPConnection("localhost")
+
+            headers = { 'content-type': "application/json" }
+
+            conn.request("GET", "/:3000undefined/developers", headers=headers)
+
+            res = conn.getresponse()
+            data = res.read()
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: |-
+            require 'uri'
+            require 'net/http'
+
+            url = URI("http://localhost/:3000undefined/developers")
+
+            http = Net::HTTP.new(url.host, url.port)
+
+            request = Net::HTTP::Get.new(url)
+            request["content-type"] = 'application/json'
+
+            response = http.request(request)
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request GET \
+              --url http://localhost/:3000undefined/developers \
+              --header 'content-type: application/json'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = ["content-type": "application/json"]
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/developers")! as URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "GET"
+
+            request.allHTTPHeaderFields = headers
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+    post:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    description: informational message
+                    example: successfully added developer
                     type: string
-                    x-go-name: CreatedAt
-                id:
-                    description: Icon request ID
-                    example: 51
-                    format: int64
-                    type: integer
-                    x-go-name: ID
-                name:
-                    description: App name
-                    example: Canva
+                  status:
+                    description: status message
+                    example: success
                     type: string
-                    x-go-name: Name
-                pack:
-                    description: Name of the  Icon pack it belongs to
-                    example: Valacons
+                type: object
+          description: OK
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    description: error message
+                    example: user may already exist
                     type: string
-                    x-go-name: Pack
-                requesters:
-                    description: Number of requesters
-                    example: 28
-                    format: int64
-                    type: integer
-                    x-go-name: Requesters
-                status:
-                    description: Status of request (pending / complete)
-                    example: pending
+                  message:
+                    description: informational message
+                    example: invalid request
                     type: string
-                    x-go-name: Status
-                updated_at:
-                    description: Date updated at
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
+                  status:
+                    description: status message
+                    example: failure
                     type: string
-                    x-go-name: UpdatedAt
-                url:
-                    description: Play Store URL (may be autogenerated)
-                    example: "https://play.google.com/store/apps/details?id=com.canva.editor"
-                    type: string
-                    x-go-name: URL
-            type: object
-            x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-        Pack:
-            description: Pack is the icon pack type
-            properties:
-                billing_status:
-                    description: Billing status
-                    example: billed
-                    type: string
-                    x-go-name: BillingStatus
-                created_at:
-                    description: Date when the pack was added
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
-                    type: string
-                    x-go-name: CreatedAt
-                developer_username:
-                    description: Icon pack developer username
-                    example: jdoe
-                    type: string
-                    x-go-name: DevUsername
-                id:
-                    description: Icon pack ID
-                    example: 2
-                    format: int64
-                    type: integer
-                    x-go-name: ID
-                name:
-                    description: Icon pack name
-                    example: Valacons
-                    type: string
-                    x-go-name: Name
-                updated_at:
-                    description: Date when the pack was updated
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
-                    type: string
-                    x-go-name: UpdatedAt
-                url:
-                    description: Icon pack url (play store)
-                    example: "https://play.google.com"
-                    type: string
-                    x-go-name: URL
-            type: object
-            x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-        Plan:
-            description: Plan is the plan type
-            properties:
-                billing_cycle:
-                    description: Billing cycle in days
-                    example: 30
-                    format: int64
-                    type: integer
-                    x-go-name: BillingCycle
-                created_at:
-                    description: Date when the plan was added
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
-                    type: string
-                    x-go-name: CreatedAt
-                description:
-                    description: Plan description
-                    example: Best suited for experienced icon pack devs.
-                    type: string
-                    x-go-name: Description
-                id:
-                    description: Plan ID
-                    example: 5
-                    format: int64
-                    type: integer
-                    x-go-name: ID
-                intro:
-                    description: Plan introduction
-                    example: Pro
-                    type: string
-                    x-go-name: Intro
-                name:
-                    description: Plan name
-                    example: John Doe
-                    type: string
-                    x-go-name: Name
-                price:
-                    description: Plan price per month
-                    example: $1.99
-                    type: string
-                    x-go-name: Price
-                updated_at:
-                    description: Date when the plan was updated
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
-                    type: string
-                    x-go-name: UpdatedAt
-            type: object
-            x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
-        User:
-            description: User is the generic user type
-            properties:
-                created_at:
-                    description: Date when the User was added
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
-                    type: string
-                    x-go-name: CreatedAt
+                type: object
+          description: server error
+      security:
+        - api_key: []
+      tags:
+        - Users
+      description: 'Saves a new developer to the database, rejecting the request on conflict'
+      operationId: SaveDev
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
                 email:
-                    description: User email
-                    example: jdoe@gmail.com
-                    type: string
-                    x-go-name: Email
-                id:
-                    description: User ID
-                    example: 24
-                    format: int64
-                    type: integer
-                    x-go-name: ID
+                  description: email address of the developer
+                  example: am@ayushm.dev
+                  type: string
                 name:
-                    description: User name
-                    example: John Doe
-                    type: string
-                    x-go-name: Name
+                  description: name of the developer
+                  example: Ayush Mishra
+                  type: string
                 role:
-                    description: User role (admin | developer)
-                    example: developer
-                    type: string
-                    x-go-name: Role
-                updated_at:
-                    description: Date when the User was updated
-                    example: "2020-09-17T03:07:13.418204+05:30"
-                    format: date-time
-                    type: string
-                    x-go-name: UpdatedAt
+                  description: role of the user (developer | admin)
+                  example: developer
+                  type: string
                 url:
-                    description: User website
-                    example: "https://jdoe.co"
-                    type: string
-                    x-go-name: URL
+                  description: developer website URL
+                  example: 'https://ayushm.dev'
+                  type: string
                 username:
-                    description: User username
-                    example: jdoe
+                  description: username of the developer
+                  example: ayush
+                  type: string
+              type: object
+        description: information about the new developer
+        required: true
+      summary: Add a developer
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/developers");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "accept: application/json");
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            headers = curl_slist_append(headers, "X-API-KEY:
+            REPLACE_KEY_VALUE");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            curl_easy_setopt(hnd, CURLOPT_POSTFIELDS,
+            "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush
+            Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}");
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/developers");
+
+            var request = new RestRequest(Method.POST);
+
+            request.AddHeader("accept", "application/json");
+
+            request.AddHeader("content-type", "application/json");
+
+            request.AddHeader("X-API-KEY", "REPLACE_KEY_VALUE");
+
+            request.AddParameter("application/json",
+            "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush
+            Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}",
+            ParameterType.RequestBody);
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/developers\"\n\n\tpayload := strings.NewReader(\"{\\\"email\\\":\\\"am@ayushm.dev\\\",\\\"name\\\":\\\"Ayush Mishra\\\",\\\"role\\\":\\\"developer\\\",\\\"url\\\":\\\"https://ayushm.dev\\\",\\\"username\\\":\\\"ayush\\\"}\")\n\n\treq, _ := http.NewRequest(\"POST\", url, payload)\n\n\treq.Header.Add(\"accept\", \"application/json\")\n\treq.Header.Add(\"content-type\", \"application/json\")\n\treq.Header.Add(\"X-API-KEY\", \"REPLACE_KEY_VALUE\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: >-
+            OkHttpClient client = new OkHttpClient();
+
+
+            MediaType mediaType = MediaType.parse("application/json");
+
+            RequestBody body = RequestBody.create(mediaType,
+            "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush
+            Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}");
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/developers")
+              .post(body)
+              .addHeader("accept", "application/json")
+              .addHeader("content-type", "application/json")
+              .addHeader("X-API-KEY", "REPLACE_KEY_VALUE")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/developers",
+              "method": "POST",
+              "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "X-API-KEY": "REPLACE_KEY_VALUE"
+              },
+              "processData": false,
+              "data": "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}"
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "POST",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/developers",
+              "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "X-API-KEY": "REPLACE_KEY_VALUE"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.write(JSON.stringify({
+              email: 'am@ayushm.dev',
+              name: 'Ayush Mishra',
+              role: 'developer',
+              url: 'https://ayushm.dev',
+              username: 'ayush'
+            }));
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/developers",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "POST",
+              CURLOPT_POSTFIELDS => "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}",
+              CURLOPT_HTTPHEADER => [
+                "X-API-KEY: REPLACE_KEY_VALUE",
+                "accept: application/json",
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: >-
+            import http.client
+
+
+            conn = http.client.HTTPConnection("localhost")
+
+
+            payload = "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush
+            Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}"
+
+
+            headers = {
+                'accept': "application/json",
+                'content-type': "application/json",
+                'X-API-KEY': "REPLACE_KEY_VALUE"
+                }
+
+            conn.request("POST", "/:3000undefined/developers", payload, headers)
+
+
+            res = conn.getresponse()
+
+            data = res.read()
+
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: >-
+            require 'uri'
+
+            require 'net/http'
+
+
+            url = URI("http://localhost/:3000undefined/developers")
+
+
+            http = Net::HTTP.new(url.host, url.port)
+
+
+            request = Net::HTTP::Post.new(url)
+
+            request["accept"] = 'application/json'
+
+            request["content-type"] = 'application/json'
+
+            request["X-API-KEY"] = 'REPLACE_KEY_VALUE'
+
+            request.body = "{\"email\":\"am@ayushm.dev\",\"name\":\"Ayush
+            Mishra\",\"role\":\"developer\",\"url\":\"https://ayushm.dev\",\"username\":\"ayush\"}"
+
+
+            response = http.request(request)
+
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request POST \
+              --url http://localhost/:3000undefined/developers \
+              --header 'X-API-KEY: REPLACE_KEY_VALUE' \
+              --header 'accept: application/json' \
+              --header 'content-type: application/json' \
+              --data '{"email":"am@ayushm.dev","name":"Ayush Mishra","role":"developer","url":"https://ayushm.dev","username":"ayush"}'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = [
+              "accept": "application/json",
+              "content-type": "application/json",
+              "X-API-KEY": "REPLACE_KEY_VALUE"
+            ]
+
+            let parameters = [
+              "email": "am@ayushm.dev",
+              "name": "Ayush Mishra",
+              "role": "developer",
+              "url": "https://ayushm.dev",
+              "username": "ayush"
+            ] as [String : Any]
+
+
+            let postData = JSONSerialization.data(withJSONObject: parameters,
+            options: [])
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/developers")! as URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "POST"
+
+            request.allHTTPHeaderFields = headers
+
+            request.httpBody = postData as Data
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+  /developers/count:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  count:
+                    description: number of developers
+                    type: integer
+                  status:
+                    description: status message
                     type: string
-                    x-go-name: Username
-            type: object
-            x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+                type: object
+          description: OK
+      tags:
+        - Users
+      description: Fetches the total count of developers in the database
+      operationId: GetDevCount
+      summary: Get the total number of developers
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/developers/count");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/developers/count");
+
+            var request = new RestRequest(Method.GET);
+
+            request.AddHeader("content-type", "application/json");
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/developers/count\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"content-type\", \"application/json\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: |-
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/developers/count")
+              .get()
+              .addHeader("content-type", "application/json")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/developers/count",
+              "method": "GET",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "GET",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/developers/count",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/developers/count",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "GET",
+              CURLOPT_HTTPHEADER => [
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: >-
+            import http.client
+
+
+            conn = http.client.HTTPConnection("localhost")
+
+
+            headers = { 'content-type': "application/json" }
+
+
+            conn.request("GET", "/:3000undefined/developers/count",
+            headers=headers)
+
+
+            res = conn.getresponse()
+
+            data = res.read()
+
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: |-
+            require 'uri'
+            require 'net/http'
+
+            url = URI("http://localhost/:3000undefined/developers/count")
+
+            http = Net::HTTP.new(url.host, url.port)
+
+            request = Net::HTTP::Get.new(url)
+            request["content-type"] = 'application/json'
+
+            response = http.request(request)
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request GET \
+              --url http://localhost/:3000undefined/developers/count \
+              --header 'content-type: application/json'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = ["content-type": "application/json"]
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/developers/count")! as URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "GET"
+
+            request.allHTTPHeaderFields = headers
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+  '/developers/{developer}':
+    get:
+      parameters:
+        - description: developer username
+          in: path
+          name: developer
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  developers:
+                    items:
+                      description: User is the generic user type
+                      properties:
+                        created_at:
+                          description: Date when the User was added
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: CreatedAt
+                        email:
+                          description: User email
+                          example: jdoe@gmail.com
+                          type: string
+                          x-go-name: Email
+                        id:
+                          description: User ID
+                          example: 24
+                          format: int64
+                          type: integer
+                          x-go-name: ID
+                        name:
+                          description: User name
+                          example: John Doe
+                          type: string
+                          x-go-name: Name
+                        role:
+                          description: User role (admin | developer)
+                          example: developer
+                          type: string
+                          x-go-name: Role
+                        updated_at:
+                          description: Date when the User was updated
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: UpdatedAt
+                        url:
+                          description: User website
+                          example: 'https://jdoe.co'
+                          type: string
+                          x-go-name: URL
+                        username:
+                          description: User username
+                          example: jdoe
+                          type: string
+                          x-go-name: Username
+                      type: object
+                      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+                    type: array
+                  status:
+                    description: status message
+                    example: success
+                    type: string
+                type: object
+          description: OK
+        '500':
+          content:
+            application/json:
+              schema:
+                properties:
+                  error:
+                    description: error message
+                    example: invalid dev
+                    type: string
+                  message:
+                    description: informational message
+                    example: server error
+                    type: string
+                  status:
+                    description: status message
+                    example: failure
+                    type: string
+                type: object
+          description: bad request
+      tags:
+        - Users
+      description: Fetches the developer with the provided username
+      operationId: GetDevByUsername
+      summary: Get a developer by username
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/developers/%7Bdeveloper%7D");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/developers/%7Bdeveloper%7D");
+
+            var request = new RestRequest(Method.GET);
+
+            request.AddHeader("content-type", "application/json");
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/developers/%7Bdeveloper%7D\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"content-type\", \"application/json\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: |-
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/developers/%7Bdeveloper%7D")
+              .get()
+              .addHeader("content-type", "application/json")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/developers/%7Bdeveloper%7D",
+              "method": "GET",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "GET",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/developers/%7Bdeveloper%7D",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/developers/%7Bdeveloper%7D",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "GET",
+              CURLOPT_HTTPHEADER => [
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: >-
+            import http.client
+
+
+            conn = http.client.HTTPConnection("localhost")
+
+
+            headers = { 'content-type': "application/json" }
+
+
+            conn.request("GET", "/:3000undefined/developers/%7Bdeveloper%7D",
+            headers=headers)
+
+
+            res = conn.getresponse()
+
+            data = res.read()
+
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: >-
+            require 'uri'
+
+            require 'net/http'
+
+
+            url =
+            URI("http://localhost/:3000undefined/developers/%7Bdeveloper%7D")
+
+
+            http = Net::HTTP.new(url.host, url.port)
+
+
+            request = Net::HTTP::Get.new(url)
+
+            request["content-type"] = 'application/json'
+
+
+            response = http.request(request)
+
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request GET \
+              --url http://localhost/:3000undefined/developers/%7Bdeveloper%7D \
+              --header 'content-type: application/json'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = ["content-type": "application/json"]
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/developers/%7Bdeveloper%7D")! as
+            URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "GET"
+
+            request.allHTTPHeaderFields = headers
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+  '/developers/{developer}/packs':
+    post:
+      parameters:
+        - description: username of the developer who owns the icon pack
+          in: path
+          name: developer
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: server error
+      security:
+        - api_key: []
+      tags:
+        - IconPacks
+      description: >-
+        Creates a new icon pack and adds it to the database; rejects the request
+        on conflict
+      operationId: CreatePack
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                billing_status:
+                  description: billing status (active | inactive)
+                  example: active
+                  type: string
+                developer_username:
+                  description: name of icon pack developer
+                  example: ayush
+                  type: string
+                name:
+                  description: name of icon pack
+                  example: Amphetamine
+                  type: string
+                url:
+                  description: play store URL
+                  example: >-
+                    https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine
+                  type: string
+              type: object
+        description: information about the new icon pack
+        required: true
+      summary: Add an icon pack
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "POST");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "accept: application/json");
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            headers = curl_slist_append(headers, "X-API-KEY:
+            REPLACE_KEY_VALUE");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            curl_easy_setopt(hnd, CURLOPT_POSTFIELDS,
+            "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}");
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs");
+
+            var request = new RestRequest(Method.POST);
+
+            request.AddHeader("accept", "application/json");
+
+            request.AddHeader("content-type", "application/json");
+
+            request.AddHeader("X-API-KEY", "REPLACE_KEY_VALUE");
+
+            request.AddParameter("application/json",
+            "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}",
+            ParameterType.RequestBody);
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"strings\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs\"\n\n\tpayload := strings.NewReader(\"{\\\"billing_status\\\":\\\"active\\\",\\\"developer_username\\\":\\\"ayush\\\",\\\"name\\\":\\\"Amphetamine\\\",\\\"url\\\":\\\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\\\"}\")\n\n\treq, _ := http.NewRequest(\"POST\", url, payload)\n\n\treq.Header.Add(\"accept\", \"application/json\")\n\treq.Header.Add(\"content-type\", \"application/json\")\n\treq.Header.Add(\"X-API-KEY\", \"REPLACE_KEY_VALUE\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: >-
+            OkHttpClient client = new OkHttpClient();
+
+
+            MediaType mediaType = MediaType.parse("application/json");
+
+            RequestBody body = RequestBody.create(mediaType,
+            "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}");
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs")
+              .post(body)
+              .addHeader("accept", "application/json")
+              .addHeader("content-type", "application/json")
+              .addHeader("X-API-KEY", "REPLACE_KEY_VALUE")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs",
+              "method": "POST",
+              "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "X-API-KEY": "REPLACE_KEY_VALUE"
+              },
+              "processData": false,
+              "data": "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}"
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "POST",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/developers/%7Bdeveloper%7D/packs",
+              "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "X-API-KEY": "REPLACE_KEY_VALUE"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.write(JSON.stringify({
+              billing_status: 'active',
+              developer_username: 'ayush',
+              name: 'Amphetamine',
+              url: 'https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine'
+            }));
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "POST",
+              CURLOPT_POSTFIELDS => "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}",
+              CURLOPT_HTTPHEADER => [
+                "X-API-KEY: REPLACE_KEY_VALUE",
+                "accept: application/json",
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: >-
+            import http.client
+
+
+            conn = http.client.HTTPConnection("localhost")
+
+
+            payload =
+            "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}"
+
+
+            headers = {
+                'accept': "application/json",
+                'content-type': "application/json",
+                'X-API-KEY': "REPLACE_KEY_VALUE"
+                }
+
+            conn.request("POST",
+            "/:3000undefined/developers/%7Bdeveloper%7D/packs", payload,
+            headers)
+
+
+            res = conn.getresponse()
+
+            data = res.read()
+
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: >-
+            require 'uri'
+
+            require 'net/http'
+
+
+            url =
+            URI("http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs")
+
+
+            http = Net::HTTP.new(url.host, url.port)
+
+
+            request = Net::HTTP::Post.new(url)
+
+            request["accept"] = 'application/json'
+
+            request["content-type"] = 'application/json'
+
+            request["X-API-KEY"] = 'REPLACE_KEY_VALUE'
+
+            request.body =
+            "{\"billing_status\":\"active\",\"developer_username\":\"ayush\",\"name\":\"Amphetamine\",\"url\":\"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine\"}"
+
+
+            response = http.request(request)
+
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request POST \
+              --url http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs \
+              --header 'X-API-KEY: REPLACE_KEY_VALUE' \
+              --header 'accept: application/json' \
+              --header 'content-type: application/json' \
+              --data '{"billing_status":"active","developer_username":"ayush","name":"Amphetamine","url":"https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine"}'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = [
+              "accept": "application/json",
+              "content-type": "application/json",
+              "X-API-KEY": "REPLACE_KEY_VALUE"
+            ]
+
+            let parameters = [
+              "billing_status": "active",
+              "developer_username": "ayush",
+              "name": "Amphetamine",
+              "url": "https://play.google.com/store/apps/details?id=com.ayushm.icons.amphetamine"
+            ] as [String : Any]
+
+
+            let postData = JSONSerialization.data(withJSONObject: parameters,
+            options: [])
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/developers/%7Bdeveloper%7D/packs")!
+            as URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "POST"
+
+            request.allHTTPHeaderFields = headers
+
+            request.httpBody = postData as Data
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+  /icons:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  icons:
+                    items:
+                      description: Icon is the icon request type
+                      properties:
+                        component:
+                          description: App component
+                          example: >-
+                            com.canva.editor/com.canva.app.editor.splash.SplashActivity
+                          type: string
+                          x-go-name: Component
+                        created_at:
+                          description: Date created at
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: CreatedAt
+                        id:
+                          description: Icon request ID
+                          example: 51
+                          format: int64
+                          type: integer
+                          x-go-name: ID
+                        name:
+                          description: App name
+                          example: Canva
+                          type: string
+                          x-go-name: Name
+                        pack:
+                          description: Name of the  Icon pack it belongs to
+                          example: Valacons
+                          type: string
+                          x-go-name: Pack
+                        requesters:
+                          description: Number of requesters
+                          example: 28
+                          format: int64
+                          type: integer
+                          x-go-name: Requesters
+                        status:
+                          description: Status of request (pending / complete)
+                          example: pending
+                          type: string
+                          x-go-name: Status
+                        updated_at:
+                          description: Date updated at
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: UpdatedAt
+                        url:
+                          description: Play Store URL (may be autogenerated)
+                          example: >-
+                            https://play.google.com/store/apps/details?id=com.canva.editor
+                          type: string
+                          x-go-name: URL
+                      type: object
+                      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+                    type: array
+                  message:
+                    description: informational message
+                    example: retrieved 146 icons
+                    type: string
+                  status:
+                    description: status message
+                    example: success
+                    type: string
+                type: object
+          description: OK
+      tags:
+        - IconRequests
+      description: Fetches the entire list of all icon requests belonging to all icon packs
+      operationId: GetIcons
+      summary: Get the list of all icon requests
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/icons");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/icons");
+
+            var request = new RestRequest(Method.GET);
+
+            request.AddHeader("content-type", "application/json");
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/icons\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"content-type\", \"application/json\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: |-
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/icons")
+              .get()
+              .addHeader("content-type", "application/json")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/icons",
+              "method": "GET",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "GET",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/icons",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/icons",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "GET",
+              CURLOPT_HTTPHEADER => [
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: |-
+            import http.client
+
+            conn = http.client.HTTPConnection("localhost")
+
+            headers = { 'content-type': "application/json" }
+
+            conn.request("GET", "/:3000undefined/icons", headers=headers)
+
+            res = conn.getresponse()
+            data = res.read()
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: |-
+            require 'uri'
+            require 'net/http'
+
+            url = URI("http://localhost/:3000undefined/icons")
+
+            http = Net::HTTP.new(url.host, url.port)
+
+            request = Net::HTTP::Get.new(url)
+            request["content-type"] = 'application/json'
+
+            response = http.request(request)
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request GET \
+              --url http://localhost/:3000undefined/icons \
+              --header 'content-type: application/json'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = ["content-type": "application/json"]
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/icons")! as URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "GET"
+
+            request.allHTTPHeaderFields = headers
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+  /packs:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  packs:
+                    items:
+                      description: Pack is the icon pack type
+                      properties:
+                        billing_status:
+                          description: Billing status
+                          example: billed
+                          type: string
+                          x-go-name: BillingStatus
+                        created_at:
+                          description: Date when the pack was added
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: CreatedAt
+                        developer_username:
+                          description: Icon pack developer username
+                          example: jdoe
+                          type: string
+                          x-go-name: DevUsername
+                        id:
+                          description: Icon pack ID
+                          example: 2
+                          format: int64
+                          type: integer
+                          x-go-name: ID
+                        name:
+                          description: Icon pack name
+                          example: Valacons
+                          type: string
+                          x-go-name: Name
+                        updated_at:
+                          description: Date when the pack was updated
+                          example: '2020-09-17T03:07:13.418204+05:30'
+                          format: date-time
+                          type: string
+                          x-go-name: UpdatedAt
+                        url:
+                          description: Icon pack url (play store)
+                          example: 'https://play.google.com'
+                          type: string
+                          x-go-name: URL
+                      type: object
+                      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+                    type: array
+                  status:
+                    description: status message
+                    example: success
+                    type: string
+                type: object
+          description: OK
+      tags:
+        - IconPacks
+      description: >-
+        Fetches the entire list of all icon packs from all developers present in
+        the database
+      operationId: GetPacks
+      summary: Get the list of all icon packs
+      x-codeSamples:
+        - lang: C + Libcurl
+          source: >-
+            CURL *hnd = curl_easy_init();
+
+
+            curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
+
+            curl_easy_setopt(hnd, CURLOPT_URL,
+            "http://localhost/:3000undefined/packs");
+
+
+            struct curl_slist *headers = NULL;
+
+            headers = curl_slist_append(headers, "content-type:
+            application/json");
+
+            curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
+
+
+            CURLcode ret = curl_easy_perform(hnd);
+        - lang: Csharp + Restsharp
+          source: >-
+            var client = new
+            RestClient("http://localhost/:3000undefined/packs");
+
+            var request = new RestRequest(Method.GET);
+
+            request.AddHeader("content-type", "application/json");
+
+            IRestResponse response = client.Execute(request);
+        - lang: Go + Native
+          source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io/ioutil\"\n)\n\nfunc main() {\n\n\turl := \"http://localhost/:3000undefined/packs\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"content-type\", \"application/json\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := ioutil.ReadAll(res.Body)\n\n\tfmt.Println(res)\n\tfmt.Println(string(body))\n\n}"
+        - lang: Java + Okhttp
+          source: |-
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+              .url("http://localhost/:3000undefined/packs")
+              .get()
+              .addHeader("content-type", "application/json")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Javascript + Jquery
+          source: |-
+            const settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://localhost/:3000undefined/packs",
+              "method": "GET",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+        - lang: Node + Native
+          source: |-
+            const http = require("http");
+
+            const options = {
+              "method": "GET",
+              "hostname": "localhost",
+              "port": null,
+              "path": "/:3000undefined/packs",
+              "headers": {
+                "content-type": "application/json"
+              }
+            };
+
+            const req = http.request(options, function (res) {
+              const chunks = [];
+
+              res.on("data", function (chunk) {
+                chunks.push(chunk);
+              });
+
+              res.on("end", function () {
+                const body = Buffer.concat(chunks);
+                console.log(body.toString());
+              });
+            });
+
+            req.end();
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "http://localhost/:3000undefined/packs",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "GET",
+              CURLOPT_HTTPHEADER => [
+                "content-type: application/json"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Python + Python3
+          source: |-
+            import http.client
+
+            conn = http.client.HTTPConnection("localhost")
+
+            headers = { 'content-type': "application/json" }
+
+            conn.request("GET", "/:3000undefined/packs", headers=headers)
+
+            res = conn.getresponse()
+            data = res.read()
+
+            print(data.decode("utf-8"))
+        - lang: Ruby + Native
+          source: |-
+            require 'uri'
+            require 'net/http'
+
+            url = URI("http://localhost/:3000undefined/packs")
+
+            http = Net::HTTP.new(url.host, url.port)
+
+            request = Net::HTTP::Get.new(url)
+            request["content-type"] = 'application/json'
+
+            response = http.request(request)
+            puts response.read_body
+        - lang: Shell + Curl
+          source: |-
+            curl --request GET \
+              --url http://localhost/:3000undefined/packs \
+              --header 'content-type: application/json'
+        - lang: Swift + Nsurlsession
+          source: >-
+            import Foundation
+
+
+            let headers = ["content-type": "application/json"]
+
+
+            let request = NSMutableURLRequest(url: NSURL(string:
+            "http://localhost/:3000undefined/packs")! as URL,
+                                                    cachePolicy: .useProtocolCachePolicy,
+                                                timeoutInterval: 10.0)
+            request.httpMethod = "GET"
+
+            request.allHTTPHeaderFields = headers
+
+
+            let session = URLSession.shared
+
+            let dataTask = session.dataTask(with: request as URLRequest,
+            completionHandler: { (data, response, error) -> Void in
+              if (error != nil) {
+                print(error)
+              } else {
+                let httpResponse = response as? HTTPURLResponse
+                print(httpResponse)
+              }
+            })
+
+
+            dataTask.resume()
+components:
+  schemas:
+    Billing:
+      description: Billing is the junction type of User and Plan
+      properties:
+        dev_id:
+          description: ID of the associated developer
+          example: 3
+          format: int64
+          type: integer
+          x-go-name: DevID
+        plan_id:
+          description: ID of the plan being billed
+          example: 1
+          format: int64
+          type: integer
+          x-go-name: PlanID
+      type: object
+      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+    Icon:
+      description: Icon is the icon request type
+      properties:
+        component:
+          description: App component
+          example: com.canva.editor/com.canva.app.editor.splash.SplashActivity
+          type: string
+          x-go-name: Component
+        created_at:
+          description: Date created at
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: CreatedAt
+        id:
+          description: Icon request ID
+          example: 51
+          format: int64
+          type: integer
+          x-go-name: ID
+        name:
+          description: App name
+          example: Canva
+          type: string
+          x-go-name: Name
+        pack:
+          description: Name of the  Icon pack it belongs to
+          example: Valacons
+          type: string
+          x-go-name: Pack
+        requesters:
+          description: Number of requesters
+          example: 28
+          format: int64
+          type: integer
+          x-go-name: Requesters
+        status:
+          description: Status of request (pending / complete)
+          example: pending
+          type: string
+          x-go-name: Status
+        updated_at:
+          description: Date updated at
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: UpdatedAt
+        url:
+          description: Play Store URL (may be autogenerated)
+          example: 'https://play.google.com/store/apps/details?id=com.canva.editor'
+          type: string
+          x-go-name: URL
+      type: object
+      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+    Pack:
+      description: Pack is the icon pack type
+      properties:
+        billing_status:
+          description: Billing status
+          example: billed
+          type: string
+          x-go-name: BillingStatus
+        created_at:
+          description: Date when the pack was added
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: CreatedAt
+        developer_username:
+          description: Icon pack developer username
+          example: jdoe
+          type: string
+          x-go-name: DevUsername
+        id:
+          description: Icon pack ID
+          example: 2
+          format: int64
+          type: integer
+          x-go-name: ID
+        name:
+          description: Icon pack name
+          example: Valacons
+          type: string
+          x-go-name: Name
+        updated_at:
+          description: Date when the pack was updated
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: UpdatedAt
+        url:
+          description: Icon pack url (play store)
+          example: 'https://play.google.com'
+          type: string
+          x-go-name: URL
+      type: object
+      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+    Plan:
+      description: Plan is the plan type
+      properties:
+        billing_cycle:
+          description: Billing cycle in days
+          example: 30
+          format: int64
+          type: integer
+          x-go-name: BillingCycle
+        created_at:
+          description: Date when the plan was added
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: CreatedAt
+        description:
+          description: Plan description
+          example: Best suited for experienced icon pack devs.
+          type: string
+          x-go-name: Description
+        id:
+          description: Plan ID
+          example: 5
+          format: int64
+          type: integer
+          x-go-name: ID
+        intro:
+          description: Plan introduction
+          example: Pro
+          type: string
+          x-go-name: Intro
+        name:
+          description: Plan name
+          example: John Doe
+          type: string
+          x-go-name: Name
+        price:
+          description: Plan price per month
+          example: $1.99
+          type: string
+          x-go-name: Price
+        updated_at:
+          description: Date when the plan was updated
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: UpdatedAt
+      type: object
+      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+    User:
+      description: User is the generic user type
+      properties:
+        created_at:
+          description: Date when the User was added
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: CreatedAt
+        email:
+          description: User email
+          example: jdoe@gmail.com
+          type: string
+          x-go-name: Email
+        id:
+          description: User ID
+          example: 24
+          format: int64
+          type: integer
+          x-go-name: ID
+        name:
+          description: User name
+          example: John Doe
+          type: string
+          x-go-name: Name
+        role:
+          description: User role (admin | developer)
+          example: developer
+          type: string
+          x-go-name: Role
+        updated_at:
+          description: Date when the User was updated
+          example: '2020-09-17T03:07:13.418204+05:30'
+          format: date-time
+          type: string
+          x-go-name: UpdatedAt
+        url:
+          description: User website
+          example: 'https://jdoe.co'
+          type: string
+          x-go-name: URL
+        username:
+          description: User username
+          example: jdoe
+          type: string
+          x-go-name: Username
+      type: object
+      x-go-package: github.com/PrunedNeuron/Fluoride/pkg/model
+  securitySchemes:
+    api_key:
+      in: header
+      name: X-API-KEY
+      type: apiKey
+
