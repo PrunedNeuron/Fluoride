@@ -2,13 +2,10 @@ package logger
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/http/httputil"
-	"strconv"
 	"time"
 
-	"github.com/blendle/zapdriver"
 	"github.com/go-chi/chi/middleware"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -72,7 +69,7 @@ func DefaultHTTPLogger(logRequestBody bool, disabledEndpoints []string) func(htt
 }
 
 // StackDriverHTTPLogger is a much more verbose logger. CURRENTLY UNUSED
-func StackDriverHTTPLogger(logRequestBody bool, disabledEndpoints []string) func(http.Handler) http.Handler {
+/* func StackDriverHTTPLogger(logRequestBody bool, disabledEndpoints []string) func(http.Handler) http.Handler {
 	// Make a map lookup for disabled endpoints
 	disabled := make(map[string]struct{})
 	for _, d := range disabledEndpoints {
@@ -135,3 +132,4 @@ func StackDriverHTTPLogger(logRequestBody bool, disabledEndpoints []string) func
 		})
 	}
 }
+*/
