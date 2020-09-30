@@ -13,8 +13,8 @@ import (
 
 var (
 	configFile string
-	logger              *zap.SugaredLogger
-	rootCmd             = &cobra.Command{
+	logger     *zap.SugaredLogger
+	rootCmd    = &cobra.Command{
 		Short: "Fluoride is a robust icon pack management tool",
 		Long:  `A robust and complete icon pack management platform, built to make the lives of icon pack designers easier.`,
 		Use:   strings.ToLower(config.Executable),
@@ -29,11 +29,7 @@ func initConfiguration() {
 func initLogger() {
 
 	// Build the logger
-	globalLogger, err := config.ConfigureLogger()
-
-	if err != nil {
-		logger.Errorf("Failed to build logger")
-	}
+	globalLogger := config.ConfigureLogger()
 
 	zap.ReplaceGlobals(globalLogger)
 	logger = globalLogger.Sugar().With("package", "cmd")
