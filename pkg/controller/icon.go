@@ -56,6 +56,54 @@ func GetIcons(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetIconsByDev responds with a list of all the icons by the dev
+// * GET /developers/{developer}/icons
+// swagger:operation GET /developers/{developer}/icons IconRequests GetIconsByDev
+//
+// Get icon requests by developer
+//
+// Fetches all icon requests that belong to the given developer
+// ---
+// produces:
+//     - application/json
+//
+// parameters:
+//     - name: developer
+//       in: path
+//       description: developer username
+//       required: true
+//       type: string
+//
+// responses:
+//     "200":
+//         description: OK
+//         schema:
+//             type: object
+//             properties:
+//                     status:
+//                         type: string
+//                         description: status message
+//                         example: success
+//                     icons:
+//                         type: array
+//                         items:
+//                             "$ref": "#/definitions/Icon"
+//     "500":
+//         description: bad request
+//         schema:
+//             type: object
+//             properties:
+//                     status:
+//                         type: string
+//                         description: status message
+//                         example: failure
+//                     message:
+//                         type: string
+//                         description: informational message
+//                         example: server error
+//                     error:
+//                         type: string
+//                         description: error message
+//                         example: invalid dev
 func GetIconsByDev(w http.ResponseWriter, r *http.Request) {
 
 	// Get dev from url
