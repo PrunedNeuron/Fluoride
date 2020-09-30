@@ -10,9 +10,10 @@ import (
 
 // ApplicationConfiguration is the application config model
 type ApplicationConfiguration struct {
-	Name    string `json:"name" yaml:"name" mapstructure:"name"`
-	Author  string `json:"author" yaml:"author" mapstructure:"author"`
-	Version string `json:"version" yaml:"version" mapstructure:"version"`
+	Name        string `json:"name" yaml:"name" mapstructure:"name"`
+	Author      string `json:"author" yaml:"author" mapstructure:"author"`
+	Version     string `json:"version" yaml:"version" mapstructure:"version"`
+	Environment string `json:"environment" yaml:"environment" mapstructure:"environment"`
 }
 
 func (config *ApplicationConfiguration) String() string {

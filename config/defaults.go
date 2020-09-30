@@ -12,6 +12,7 @@ func SetDefaults() {
 	// Application info
 	viper.SetDefault("application.name", "Fluoride")
 	viper.SetDefault("application.version", "1.0.0")
+	viper.SetDefault("application.environment", "production")
 
 	// Logger Defaults
 	viper.SetDefault("logger.level", "info")
