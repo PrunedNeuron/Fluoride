@@ -47,26 +47,23 @@ func New(next http.Handler) http.Handler {
 }
 
 const (
-	redocTemplate = `<!DOCTYPE html>
-<html>
-  <head>
-    <title>{{ .Title }}</title>
-    <!-- needed for adaptive design -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--
-    ReDoc doesn't change outer page styles
-    -->
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <redoc spec-url='{{ .Path }}{{ .SpecURL }}'></redoc>
-    <script src="{{ .RedocURL }}"></script>
-  </body>
-</html>
-`
+	redocTemplate = `
+		<!DOCTYPE html>
+		<html>
+			<head>
+				<title>{{ .Title }}</title>
+				<meta name="viewport" content="width=device-width, initial-scale=1">
+				<style>
+				body {
+					margin: 0;
+					padding: 0;
+				}
+				</style>
+			</head>
+			<body>
+				<redoc spec-url='{{ .Path }}{{ .SpecURL }}'></redoc>
+				<script src="{{ .RedocURL }}"></script>
+			</body>
+		</html>
+	`
 )
