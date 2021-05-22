@@ -5,18 +5,18 @@ go 1.15
 require (
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/go-chi/chi v4.1.2+incompatible
-	github.com/go-chi/cors v1.1.1
+	github.com/go-chi/chi/v5 v5.0.3
+	github.com/go-chi/cors v1.2.0
 	github.com/go-chi/render v1.0.1
 	github.com/go-openapi/loads v0.20.2
-	github.com/go-openapi/strfmt v0.20.0
+	github.com/go-openapi/strfmt v0.20.1
 	github.com/go-openapi/validate v0.20.2
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible // indirect
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
-	github.com/jackc/pgx v3.6.2+incompatible
-	github.com/jackc/pgx/v4 v4.10.1
-	github.com/jmoiron/sqlx v1.3.1
+	github.com/jackc/pgx/v4 v4.11.0
+	github.com/jackc/pgx/v4 v4.11.0
+	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/magiconair/properties v1.8.4 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible
@@ -29,7 +29,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
-	github.com/unrolled/secure v1.0.8
+	github.com/unrolled/secure v1.0.9
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
 	golang.org/x/crypto v0.0.0-20200930160638-afb6bcd081ae // indirect
