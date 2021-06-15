@@ -1,0 +1,4 @@
+# pre-commit:
+#     commands:
+#         ensure-new-line:
+#             runner: sh
