@@ -1,4 +1,4 @@
-FROM postgres:13.3-alpine
+FROM postgres:14.0-alpine
 ENV LANG en_US.utf8
 
 # Custom initialization scripts
